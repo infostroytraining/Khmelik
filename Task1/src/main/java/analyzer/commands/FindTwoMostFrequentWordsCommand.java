@@ -27,9 +27,13 @@ public class FindTwoMostFrequentWordsCommand implements AnalyzerCommand {
                 .sorted(new WordFrequencyComparator().reversed())
                 .limit(2)
                 .sorted(new WordAlphabeticalComparator().reversed())
-                .forEach(wordFrequencyPair ->
-                        result.append(wordFrequencyPair.getKey()).append(" -> ")
-                                .append(wordFrequencyPair.getValue()).append('\n'));
+                .forEach(wordFrequencyPair -> appendWordToBuilder(wordFrequencyPair, result));
         return (result.length() != 0) ? result.deleteCharAt(result.length() - 1).toString() : NO_WORDS_MESSAGE;
+    }
+
+    private StringBuilder appendWordToBuilder(Map.Entry<String, Long> wordFrequencyPair, StringBuilder builder){
+        builder.append(wordFrequencyPair.getKey()).append(" -> ")
+                .append(wordFrequencyPair.getValue()).append('\n');
+        return builder;
     }
 }

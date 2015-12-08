@@ -8,6 +8,8 @@ import java.io.IOException;
 
 public class Analyzer {
 
+    private static final String EXCEPTION_MESSAGE = "\nFor detail operation descriptions use --help command";
+
     @Parameter(names = {"-i", "--input"}, required = true, description = "Required. Usage: -i||--input [parsing file full name]")
     private String textFilePath;
 
@@ -20,18 +22,21 @@ public class Analyzer {
     public static void main(String[] args) {
         Analyzer analyzer = new Analyzer();
         JCommander cmd = new JCommander(analyzer);
+        String analyzerResult;
+        long start = System.currentTimeMillis();
         try {
             cmd.parse(args);
-            if (analyzer.help) {
-                cmd.usage();
-            }
-            long start = System.currentTimeMillis();
-            System.out.println(analyzer.task.getCommand().execute(analyzer.textFilePath));
-            long end = System.currentTimeMillis() - start;
-            System.out.println("Estimated time: " + end + "ms.");
+            if (analyzer.help) cmd.usage();
+            analyzerResult = executeTask(analyzer);
         } catch (ParameterException | IOException ex) {
-            System.out.println(ex.getMessage());
-            cmd.usage();
+            analyzerResult = (ex.toString() + EXCEPTION_MESSAGE);
         }
+        long end = System.currentTimeMillis() - start;
+        System.out.println(analyzerResult);
+        System.out.println("elapsed time: " + end + " millis");
+    }
+
+    private static String executeTask(Analyzer analyzer) throws IOException {
+        return analyzer.task.getCommand().execute(analyzer.textFilePath);
     }
 }

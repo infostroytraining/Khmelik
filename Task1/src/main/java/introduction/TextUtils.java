@@ -28,7 +28,7 @@ public class TextUtils {
         return builder.toString();
     }
 
-    private void correctSentencesStartWithCapitalLetterRule(StringBuilder builder) {
+    private StringBuilder correctSentencesStartWithCapitalLetterRule(StringBuilder builder) {
         Pattern pattern = Pattern.compile(SENTENCE_REGEX_PATTERN);
         Matcher matcher = pattern.matcher(builder.toString());
         while (matcher.find()) {
@@ -37,20 +37,23 @@ public class TextUtils {
                 builder.setCharAt(matcher.start(), Character.toUpperCase(sentenceStartSymbol));
             }
         }
+        return builder;
     }
 
-    private void correctTextEndingRule(StringBuilder builder) {
+    private StringBuilder correctTextEndingRule(StringBuilder builder) {
         if (builder.charAt(builder.length() - 1) != '.') {
             builder.append('.');
         }
+        return builder;
     }
 
-    private void correctSpaceAfterPunctuationSymbolRule(StringBuilder builder) {
+    private StringBuilder correctSpaceAfterPunctuationSymbolRule(StringBuilder builder) {
         for (int i = 0; i < builder.length(); i++) {
             if ((builder.charAt(i) == ',' || builder.charAt(i) == '.')
                     && i + 1 < builder.length() && builder.charAt(i + 1) != ' ') {
                 builder.insert(i + 1, ' ');
             }
         }
+        return builder;
     }
 }
