@@ -13,14 +13,6 @@ public enum Task {
 
     private AnalyzerCommand command;
 
-    private Task(AnalyzerCommand command) {
-        this.command = command;
-    }
-
-    public AnalyzerCommand getCommand() {
-        return command;
-    }
-
     public static Task fromString(String value) {
         for (Task task : Task.values()) {
             if (task.toString().equalsIgnoreCase(value)) {
@@ -29,4 +21,13 @@ public enum Task {
         }
         return null;
     }
+
+    private Task(AnalyzerCommand command) {
+        this.command = command;
+    }
+
+    public AnalyzerCommand getCommand() {
+        return command;
+    }
+
 }

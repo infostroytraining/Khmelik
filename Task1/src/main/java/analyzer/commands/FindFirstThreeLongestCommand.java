@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 
 public class FindFirstThreeLongestCommand implements AnalyzerCommand {
 
+    public static final String NO_WORDS_MESSAGE = "No words found.";
+
     @Override
     public String execute(String filePath) throws IOException {
         StringBuilder result = new StringBuilder();
@@ -23,6 +25,6 @@ public class FindFirstThreeLongestCommand implements AnalyzerCommand {
                 .sorted(new StringLengthComparator().reversed())
                 .limit(3)
                 .forEach(word -> result.append(word).append(" -> ").append(word.length()).append('\n'));
-        return result.toString();
+        return (result.length() != 0) ? result.toString() : NO_WORDS_MESSAGE;
     }
 }

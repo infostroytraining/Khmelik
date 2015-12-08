@@ -18,7 +18,6 @@ import java.util.regex.Pattern;
  */
 public class TextUtils {
 
-    //TODO rethink regex pattern
     public static final String SENTENCE_REGEX_PATTERN = "(\\p{L}+[\\p{L},;'\"\\s\\-]+[.?!]+)+";
 
     public String correctText(String text) {
@@ -49,8 +48,7 @@ public class TextUtils {
     private void correctSpaceAfterPunctuationSymbolRule(StringBuilder builder) {
         for (int i = 0; i < builder.length(); i++) {
             if ((builder.charAt(i) == ',' || builder.charAt(i) == '.')
-                    && i + 1 < builder.length()
-                    && builder.charAt(i + 1) != ' ') {
+                    && i + 1 < builder.length() && builder.charAt(i + 1) != ' ') {
                 builder.insert(i + 1, ' ');
             }
         }

@@ -31,9 +31,10 @@ public class MathUtils {
         }
 
         int result = 0;
-        for(int i = 0; i < String.valueOf(number).length(); i++){
-            result += number/Math.pow(DEC_DIVISOR_BASE_MODULO, i);
-        }
+        int i = 1;
+        do {
+            result += number % Math.pow(DEC_DIVISOR_BASE_MODULO, i) / Math.pow(DEC_DIVISOR_BASE_MODULO, i - 1);
+        } while (number % Math.pow(DEC_DIVISOR_BASE_MODULO, i++) != number);
         return result;
     }
 

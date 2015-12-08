@@ -47,4 +47,8 @@ public class TriangleUtilsTest {
         triangleUtils.isTriangle(-1, -2, 3);
     }
 
+    @Test
+    public void testGetTriangleArea() {
+        assertEquals(6, triangleUtils.getTriangleArea(3, 4, 5), 10);
+    }
 }

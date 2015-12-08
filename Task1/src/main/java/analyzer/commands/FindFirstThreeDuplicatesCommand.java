@@ -9,6 +9,8 @@ import java.util.*;
 
 public class FindFirstThreeDuplicatesCommand implements AnalyzerCommand {
 
+    public static final String NO_DUPLICATES_MESSAGE = "No duplicates found.";
+
     @Override
     public String execute(String filePath) throws IOException {
         StringBuilder result = new StringBuilder();
@@ -28,6 +30,6 @@ public class FindFirstThreeDuplicatesCommand implements AnalyzerCommand {
                     }
                 });
         duplicated.stream().forEach(word -> result.append(word).append('\n'));
-        return result.reverse().deleteCharAt(0).toString();
+        return (result.length() != 0) ? result.reverse().deleteCharAt(0).toString() : NO_DUPLICATES_MESSAGE;
     }
 }

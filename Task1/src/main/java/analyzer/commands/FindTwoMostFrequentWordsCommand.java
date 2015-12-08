@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 
 public class FindTwoMostFrequentWordsCommand implements AnalyzerCommand {
 
+    public static final String NO_WORDS_MESSAGE = "No words found.";
+
     @Override
     public String execute(String filePath) throws IOException {
         StringBuilder result = new StringBuilder();
@@ -26,8 +28,8 @@ public class FindTwoMostFrequentWordsCommand implements AnalyzerCommand {
                 .limit(2)
                 .sorted(new WordAlphabeticalComparator().reversed())
                 .forEach(wordFrequencyPair ->
-                        result.append("'").append(wordFrequencyPair.getKey()).append("' -> ")
+                        result.append(wordFrequencyPair.getKey()).append(" -> ")
                                 .append(wordFrequencyPair.getValue()).append('\n'));
-        return result.toString();
+        return (result.length() != 0) ? result.deleteCharAt(result.length() - 1).toString() : NO_WORDS_MESSAGE;
     }
 }
