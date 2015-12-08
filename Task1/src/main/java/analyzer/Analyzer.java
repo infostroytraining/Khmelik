@@ -33,7 +33,7 @@ public class Analyzer {
         }
         long end = System.currentTimeMillis() - start;
         System.out.println(analyzerResult);
-        System.out.println("elapsed time: " + end + " millis");
+        System.out.println("elapsed time:  " + end + " millis");
     }
 
     private static String executeTask(Analyzer analyzer) throws IOException {
