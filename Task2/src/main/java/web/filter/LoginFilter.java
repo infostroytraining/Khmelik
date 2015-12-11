@@ -11,7 +11,7 @@ import java.io.IOException;
 public class LoginFilter implements Filter {
 
     private static final Logger LOGGER = Logger.getLogger(LoginFilter.class);
-    private static final String LOGIN_PAGE_URL = "registration";
+    private static final String LOGIN_PAGE_URL = "registrationJSP";
     private static final String CSS_JSP_PNG_GIF_JS_INPUT_REGEX = ".*(css|jpg|png|gif|js|jspf)";
     private static final String USER_ATTRIBUTE_NAME = "user";
 

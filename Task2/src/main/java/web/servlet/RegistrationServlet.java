@@ -35,7 +35,7 @@ public class RegistrationServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.sendRedirect("/WEB-INF/jsp/registration.jsp");
+        resp.sendRedirect("registrationJSP");
     }
 
     @Override
@@ -71,7 +71,7 @@ public class RegistrationServlet extends HttpServlet {
             UserDTO userDTO = new UserDTO(email, name, surname, image);
             session.setAttribute("userDTO", userDTO);
             session.setAttribute("userAlreadyExistsException", e);
-            resp.sendRedirect("registration");
+            resp.sendRedirect("registrationJSP");
         }
     }
 
