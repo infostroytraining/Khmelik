@@ -27,16 +27,12 @@ public class Analyzer {
         try {
             cmd.parse(args);
             if (analyzer.help) cmd.usage();
-            analyzerResult = executeTask(analyzer);
+            analyzerResult = analyzer.task.getCommand().execute(analyzer.textFilePath);
         } catch (ParameterException | IOException ex) {
             analyzerResult = (ex.toString() + EXCEPTION_MESSAGE);
         }
         long end = System.currentTimeMillis() - start;
         System.out.println(analyzerResult);
         System.out.println("elapsed time:  " + end + " millis");
-    }
-
-    private static String executeTask(Analyzer analyzer) throws IOException {
-        return analyzer.task.getCommand().execute(analyzer.textFilePath);
     }
 }
