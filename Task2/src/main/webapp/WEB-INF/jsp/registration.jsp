@@ -11,7 +11,7 @@
 <h3>Register your account, please!</h3>
 
 <div>
-    <form action="registration" method="post">
+    <form action="registration" method="post" enctype="multipart/form-data">
 
         <label>Email *</label>
         <br/>

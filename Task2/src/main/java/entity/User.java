@@ -47,15 +47,4 @@ public class User extends Entity {
     public void setImage(String image) {
         this.image = image;
     }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
-                ", image='" + image + '\'' +
-                '}';
-    }
 }

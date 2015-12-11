@@ -35,7 +35,9 @@ public class UserValidator implements Validator<User> {
                || !user.getPassword().matches(UserField.PASSWORD.getPattern())) {
             errors.add(new FieldError(UserField.PASSWORD));
         }
-
+        if(user.getImage() != null && !user.getImage().matches(UserField.IMAGE.getPattern())){
+            errors.add(new FieldError(UserField.IMAGE));
+        }
         if (errors.size() != 0) {
             throw new ValidationException(errors);
         }

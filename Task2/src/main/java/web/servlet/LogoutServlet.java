@@ -1,5 +1,8 @@
 package web.servlet;
 
+import entity.User;
+import org.apache.log4j.Logger;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -9,12 +12,15 @@ import java.io.IOException;
 
 public class LogoutServlet extends HttpServlet {
 
+    private static final Logger LOGGER = Logger.getLogger(LogoutServlet.class);
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession(false);
+        LOGGER.debug("User " + ((User) session.getAttribute("user")).getEmail() + "has just logged out.");
         if (session != null) {
             session.invalidate();
         }
-        resp.sendRedirect("");
+        resp.sendRedirect("registration");
     }
 }

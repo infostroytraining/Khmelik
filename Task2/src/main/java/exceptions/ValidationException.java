@@ -13,5 +13,4 @@ public class ValidationException extends Exception {
     public List<FieldError> getFieldExceptions() {
         return fieldExceptions;
     }
-
 }

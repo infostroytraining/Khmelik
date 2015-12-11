@@ -20,7 +20,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User register(User user) throws ValidationException, DuplicateInsertException {
         userValidator.validate(user);
-        if(!userDao.isAlreadyCreated(user)) {
+        if (user.getImage() != null) {
+            user.setImage("/images/" + user.getName() + user.getSurname() + ".jpg");
+        }
+        if (!userDao.isAlreadyCreated(user)) {
             return userDao.create(user);
         } else {
             throw new DuplicateInsertException();

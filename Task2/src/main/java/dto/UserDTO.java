@@ -1,19 +1,15 @@
 package dto;
 
-import entity.User;
-
 public class UserDTO {
 
     private String email;
     private String name;
     private String surname;
-    private String image;
 
-    public UserDTO(String email, String name, String surname, String image) {
+    public UserDTO(String email, String name, String surname) {
         this.email = email;
         this.name = name;
         this.surname = surname;
-        this.image = image;
     }
 
     public String getEmail() {
@@ -39,22 +35,4 @@ public class UserDTO {
     public void setSurname(String surname) {
         this.surname = surname;
     }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public User getUser(){
-        User result = new User();
-        result.setName(name);
-        result.setSurname(surname);
-        result.setEmail(email);
-        result.setImage(image);
-        return result;
-    }
-
 }
