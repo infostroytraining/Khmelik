@@ -19,9 +19,8 @@ public abstract class Entity {
 
         Entity entity = (Entity) o;
 
-        if (id != entity.id) return false;
+        return id == entity.id;
 
-        return true;
     }
 
     @Override

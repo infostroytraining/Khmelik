@@ -7,7 +7,7 @@ import java.util.*;
 
 public class UserDaoMock implements UserDao {
 
-    public static List<User> users = new ArrayList<User>();
+    private static final List<User> users = new ArrayList<>();
 
     @Override
     public User create(User entity) {
@@ -17,11 +17,8 @@ public class UserDaoMock implements UserDao {
     }
 
     @Override
-    public User get(int idEntity) throws NoSuchElementException {
+    public User get(int idEntity) {
         Optional<User> result = users.stream().filter(user -> idEntity == user.getId()).findFirst();
-        if (!result.isPresent()) {
-            throw new NoSuchElementException();
-        }
         return result.get();
     }
 

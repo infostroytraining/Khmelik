@@ -9,6 +9,7 @@ import service.UserService;
 import service.mock_impl.UserServiceImpl;
 import service.validators.UserValidator;
 import service.validators.Validator;
+import web.captcha.GoogleReCaptchaValidationUtils;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -17,7 +18,7 @@ import javax.servlet.ServletContextListener;
 
 public class AppContextListener implements ServletContextListener {
 
-    public static final Logger LOGGER = Logger
+    private static final Logger LOGGER = Logger
             .getLogger(AppContextListener.class);
 
     @Override
@@ -33,18 +34,16 @@ public class AppContextListener implements ServletContextListener {
         //DAO
         UserDao userDao = new UserDaoMock();
 
-
         //Validators
         Validator<User> userValidator = new UserValidator();
-
+        GoogleReCaptchaValidationUtils googleReCaptchaValidationUtils = new GoogleReCaptchaValidationUtils();
 
         //Service
         UserService userService = new UserServiceImpl(userDao, userValidator);
 
-
         //Put beans into context
         servletContext.setAttribute("userService", userService);
-
+        servletContext.setAttribute("googleReCaptchaValidationUtils", googleReCaptchaValidationUtils);
         LOGGER.info("App context initialized");
     }
 
