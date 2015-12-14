@@ -1,0 +1,40 @@
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+		 http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+    <display-name>Task3LoggerServer</display-name>
+
+    <listener>
+        <listener-class>web.listener.AppContextListener</listener-class>
+    </listener>
+
+    <jsp-config>
+        <jsp-property-group>
+            <url-pattern>*.jspf</url-pattern>
+        </jsp-property-group>
+    </jsp-config>
+
+
+    <!-- SERVLETS -->
+    <servlet>
+        <servlet-name>LogServlet</servlet-name>
+        <servlet-class>web.servlet.LogServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>LogServlet</servlet-name>
+        <url-pattern>/logs</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>LogsJSP</servlet-name>
+        <jsp-file>/WEB-INF/logs.jsp</jsp-file>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>LogsJSP</servlet-name>
+        <url-pattern>/logsJSP</url-pattern>
+    </servlet-mapping>
+
+</web-app>

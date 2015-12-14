@@ -96,7 +96,7 @@ public class PostgreUserDao implements UserDao {
             logger.error("Cannot insert user into database.", e);
             throw new DaoException(e);
         }
-        logger.exit();
+        logger.exit(entity);
         return entity;
     }
 
