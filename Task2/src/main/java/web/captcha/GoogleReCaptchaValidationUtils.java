@@ -19,15 +19,15 @@ import java.util.List;
 
 public class GoogleReCaptchaValidationUtils {
 
-    private static final String secretKey = "6Len4RITAAAAADJd7twnHBFx8SbAp0tFBlBS9BDT";
-    private static final String url = "https://www.google.com/recaptcha/api/siteverify";
+    private static final String SECRET_KEY = "6Len4RITAAAAADJd7twnHBFx8SbAp0tFBlBS9BDT";
+    private static final String GOOGLE_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify";
 
     public boolean validate(String gRecaptchaResponse) throws IOException {
         HttpClient client = HttpClientBuilder.create().build();
-        HttpPost post = new HttpPost(url);
+        HttpPost post = new HttpPost(GOOGLE_VERIFY_URL);
 
         List<NameValuePair> urlParameters = new ArrayList<>();
-        urlParameters.add(new BasicNameValuePair("secret", secretKey));
+        urlParameters.add(new BasicNameValuePair("secret", SECRET_KEY));
         urlParameters.add(new BasicNameValuePair("response", gRecaptchaResponse));
         post.setEntity(new UrlEncodedFormEntity(urlParameters));
 

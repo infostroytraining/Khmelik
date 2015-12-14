@@ -1,23 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN">
+<Configuration status="WARN" packages="logging">
 
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout
-                    pattern="%highlight{%d{HH:mm:ss.SSS} [%t] %-5level %logger{36}:%method:%line - %msg%n}
-                    {FATAL=white, ERROR=red, WARN=blue, INFO=black, DEBUG=green, TRACE=blue}"/>
+                    pattern="%highlight{%d{HH:mm:ss.SSS} [%t] %-5level %logger{36}:%method:%line - %msg%n}{FATAL=white, ERROR=red, WARN=blue, INFO=black, DEBUG=green, TRACE=blue}"/>
         </Console>
 
         <File name="DaoLogsFile" fileName="../webapps/logs/dao-log.txt">
             <PatternLayout
-                    pattern="%highlight{%d{HH:mm:ss.SSS} [%t] %-5level %logger{36}:%method:%line - %msg%n}
-                    {FATAL=white, ERROR=red, WARN=blue, INFO=black, DEBUG=green, TRACE=blue}"/>
+                    pattern="%highlight{%d{HH:mm:ss.SSS} [%t] %-5level %logger{36}:%method:%line - %msg%n}{FATAL=white, ERROR=red, WARN=blue, INFO=black, DEBUG=green, TRACE=blue}"/>
         </File>
+        <RestServerAppender name="serverAppender" >
+            <PatternLayout
+                    pattern="%highlight{%d{HH:mm:ss.SSS} [%t] %-5level %logger{36}:%method:%line - %msg%n}{FATAL=white, ERROR=red, WARN=blue, INFO=black, DEBUG=green, TRACE=blue}"/>
+        </RestServerAppender>
     </Appenders>
 
     <Loggers>
         <Root level="all">
             <AppenderRef ref="Console"/>
+            <AppenderRef ref="serverAppender"/>
         </Root>
         <Logger name="dao">
             <AppenderRef ref="DaoLogsFile"/>
