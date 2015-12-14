@@ -11,14 +11,14 @@ import java.util.List;
 
 public class UserValidator implements Validator<User> {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
     @Override
     public void validate(User user) throws ValidationException {
-        LOGGER.debug("User sent on validation: {}", user);
+        logger.entry(user);
         List<FieldError> errors = new ArrayList<>();
         if (user == null) {
-            LOGGER.error("Registration/inserting user is null.");
+            logger.error("Registration/inserting user is null.");
             throw new IllegalArgumentException("Registration/inserting user is null.");
         }
         if (user.getEmail() == null
@@ -44,5 +44,6 @@ public class UserValidator implements Validator<User> {
         if (errors.size() != 0) {
             throw new ValidationException(errors);
         }
+        logger.exit("User successfully validated.");
     }
 }

@@ -18,7 +18,7 @@ import java.util.ServiceConfigurationError;
 
 public class ServiceFactory {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
     private static final String MEMORY = "memory";
     private static final String DB = "db";
@@ -26,7 +26,7 @@ public class ServiceFactory {
 
     public static UserService getUserService(String type) {
         if (type == null || type.isEmpty()) {
-            LOGGER.fatal("Could initialize application. Source type is null or empty");
+            logger.fatal("Could initialize application. Source type is null or empty");
             throw new IllegalArgumentException();
         }
         if (type.equals(MEMORY)) {
@@ -34,7 +34,7 @@ public class ServiceFactory {
         } else if (type.equals(DB)) {
             return initTransactionalService();
         } else {
-            LOGGER.fatal("Could initialize application with source type {}", type);
+            logger.fatal("Could initialize application with source type {}", type);
             throw new ServiceConfigurationError("Could not initialize application with source type [" + type + "]");
         }
     }
@@ -44,7 +44,7 @@ public class ServiceFactory {
             InitialContext initContext = new InitialContext();
             return (DataSource) initContext.lookup(DB_CONNECTION_CONFIG);
         } catch (NamingException e) {
-            LOGGER.fatal("Could not load postgres connection pool.");
+            logger.fatal("Could not load postgres connection pool from context.", e);
             throw new ServiceConfigurationError("Could not load postgres connection pool.");
         }
     }

@@ -17,7 +17,7 @@ import java.io.IOException;
 
 public class LoginServlet extends HttpServlet{
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
     private UserService userService;
 
@@ -25,7 +25,7 @@ public class LoginServlet extends HttpServlet{
     public void init() throws ServletException {
         userService = (UserService) getServletContext().getAttribute("userService");
         if (userService == null) {
-            LOGGER.fatal("Could not initialize servlet from application context");
+            logger.fatal("Could not initialize servlet from application context");
             throw new UnavailableException(
                     "Could not get user service or google captcha validator.");
         }
@@ -33,11 +33,13 @@ public class LoginServlet extends HttpServlet{
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        logger.entry();
         req.getRequestDispatcher("loginJSP").forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        logger.entry();
         req.setCharacterEncoding("UTF-8");
         String login = req.getParameter("email");
         String password = req.getParameter("password");
@@ -46,14 +48,17 @@ public class LoginServlet extends HttpServlet{
             User user = userService.loadUserByUsername(login);
             if(user != null && user.getPassword().equals(password)){
                 req.getSession().setAttribute("user", user);
+                logger.info("User {} have been successfully logged in.", login);
                 resp.sendRedirect("welcome");
             } else {
                 req.getSession().setAttribute("loginError", "Wrong credentials. Please try again.");
                 req.getSession().setAttribute("loginDTO", login);
+                logger.info("User {} credentials are wrong.", login);
+                logger.exit();
                 resp.sendRedirect("login");
             }
         } catch (TransactionException | DuplicateInsertException | ValidationException e) {
-            LOGGER.error("Transactional | Duplicate | Validation exception in login servlet.");
+            logger.error("Transactional | Duplicate | Validation exception in login servlet.", e);
             resp.sendError(500);
         }
     }

@@ -15,12 +15,13 @@ import java.sql.SQLException;
 
 public class TransactionManager {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
     private DataSource usersDs;
 
     public TransactionManager(DataSource dataSource) {
         this.usersDs = dataSource;
+        logger.info("Transaction manager initialized.");
     }
 
     public <T> T doTask(Transaction<T> transaction, int transactionIsolation) throws TransactionException, DuplicateInsertException, ValidationException {
@@ -32,7 +33,7 @@ public class TransactionManager {
             ConnectionHolder.getConnection().commit();
             return result;
         } catch (SQLException | DaoException e) {
-            LOGGER.error("Transactional exception caused by {}.", e.getMessage());
+            logger.error("Transactional exception caused by {}.", e.getMessage());
             throw new TransactionException(e);
         }
     }

@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class LoginFilter implements Filter {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
     private static final String LOGIN_PAGE_URL = "login";
     private static final String CSS_JSP_PNG_GIF_JS_INPUT_REGEX = ".*(css|jpg|png|gif|js|jspf)";
@@ -25,7 +25,7 @@ public class LoginFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
         this.loginExcludePattern = filterConfig.getInitParameter("loginExcludePattern");
         this.registrationExcludePattern = filterConfig.getInitParameter("registrationExcludePattern");
-        LOGGER.debug("LoginFilter initialized.");
+        logger.info("LoginFilter initialized.");
     }
 
     @Override
@@ -33,18 +33,18 @@ public class LoginFilter implements Filter {
             throws IOException, ServletException {
         HttpServletRequest servletRequest = (HttpServletRequest) request;
         HttpServletResponse servletResponse = (HttpServletResponse) response;
-
+        logger.entry(((HttpServletRequest) request).getRequestURI());
         if(isValidUrl(servletRequest)){
             chain.doFilter(request, response);
         } else {
-            LOGGER.debug("No user logged in.");
+            logger.info("No user logged in.");
             servletResponse.sendRedirect(LOGIN_PAGE_URL);
         }
     }
 
     @Override
     public void destroy() {
-        LOGGER.debug("LoginFilter destroyed.");
+        logger.info("LoginFilter destroyed.");
     }
 
     private boolean isValidUrl(HttpServletRequest servletRequest) {

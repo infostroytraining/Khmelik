@@ -13,7 +13,7 @@ import javax.servlet.ServletContextListener;
 
 public class AppContextListener implements ServletContextListener {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
     private static final String STORAGE_CONFIG_PARAMETER = "storage";
     private static final String IMAGES_FOLDER = "imagesFolder";
@@ -21,7 +21,7 @@ public class AppContextListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-        LOGGER.debug("Start to initialize servlet context.");
+        logger.info("Begin to initialize servlet context.");
         ServletContext servletContext = servletContextEvent.getServletContext();
 
         //Get context parameters
@@ -30,22 +30,23 @@ public class AppContextListener implements ServletContextListener {
         if (imagesFolderRelativePath == null) {
             imagesFolderRelativePath = DEFAULT_IMAGES_FOLDER;
         }
-
+        logger.info("Context parameters initialized.");
 
         //Initialize services
         UserService userService = ServiceFactory.getUserService(storageConfigParameter);
-
         GoogleReCaptchaValidationUtils googleReCaptchaValidationUtils = new GoogleReCaptchaValidationUtils();
+        logger.info("Services and validation utils initialized");
+
 
         //Put beans into context
         servletContext.setAttribute("imagesFolderRelativePath", imagesFolderRelativePath);
         servletContext.setAttribute("userService", userService);
         servletContext.setAttribute("googleReCaptchaValidationUtils", googleReCaptchaValidationUtils);
-        LOGGER.info("App context initialized");
+        logger.info("App context initialized");
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent arg0) {
-        LOGGER.info("Servlet context destroyed.");
+        logger.info("Servlet context destroyed.");
     }
 }
