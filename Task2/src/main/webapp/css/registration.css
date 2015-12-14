@@ -10,11 +10,7 @@ h3 {
 }
 form {
     background-color: white;
-    width: 300px;
+    width: 35%;
     margin: 0 auto;
-}
-
-div {
-    text-align: center;
-    padding-bottom: 15px;
+    padding: 5px;
 }

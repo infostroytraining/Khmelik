@@ -3,8 +3,6 @@
 <html>
 <head>
     <title>User registration</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
-          integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="css/registration.css">
     <script src='https://www.google.com/recaptcha/api.js'></script>
     <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
@@ -13,75 +11,56 @@
 <body>
 
 
-<div>
-    <form action="registration" method="post" enctype="multipart/form-data">
-        <h4>Register your account, please!</h4>
-
-        <p style="color: red">Fields with * are required.</p>
-
-        <div>
-            <label>Email *</label>
-            <br/>
-            <input name="email" type="email" value="${sessionScope.userDTO.email}"/>
-        </div>
-
-        <div>
-            <label>Name *</label>
-            <br/>
-            <input name="name" type="text" value="${sessionScope.userDTO.name}"/>
-        </div>
-
-        <div>
-            <label>Surname *</label>
-            <br/>
-            <input name="surname" type="text" value="${sessionScope.userDTO.surname}"/>
-        </div>
-
-        <div>
-            <label>Password *</label>
-            <br/>
-            <input name="password" type="password" value=""/>
-        </div>
-
-        <div>
-            <label>Confirm password *</label>
-            <br/>
-            <input name="confirmedPassword" type="password" value=""/>
-        </div>
-
-        <div>
-            <label>Avatar (Image)</label>
-            <br/>
-            <input name="image" type="file"/>
-        </div>
+<form action="registration" method="post" enctype="multipart/form-data">
+    <fieldset>
+        <legend>Register your account, please!</legend>
+        Email *<br/>
+        <input name="email" type="email" value="${sessionScope.userDTO.email}"/>
+        <br/><br/>
+        Name *<br/>
+        <input name="name" type="text" value="${sessionScope.userDTO.name}"/>
+        <br/><br/>
+        Surname *<br/>
+        <input name="surname" type="text" value="${sessionScope.userDTO.surname}"/>
+        <br/><br/>
+        Password *<br/>
+        <input name="password" type="password" value=""/>
+        <br/><br/>
+        Confirm password *<br/>
+        <input name="confirmedPassword" type="password" value=""/>
+        <br/><br/>
+        Avatar (Image)<br/>
+        <input name="image" type="file"/>
+        <br/><br/>
+    </fieldset>
+    <fieldset>
+        <legend>Anti-robot protection</legend>
 
         <%@include file="/WEB-INF/jspf/captcha/googleRecaptcha.jspf" %>
-
+        <br/>
         <%@include file="/WEB-INF/jspf/captcha/simpleCaptcha.jspf" %>
 
-        <hr/>
+    </fieldset>
 
-        <div>
+    <fieldset>
+        <legend>Submit and validation errors</legend>
+            <span style="color: red;">
+            <c:if test="${not empty sessionScope.userInputException.fieldExceptions}">
+                <c:forEach items="${sessionScope.userInputException.fieldExceptions}" var="error">
+                    ${error.message}<br/>
+                </c:forEach>
+            </c:if>
+            ${sessionScope.userInputException.message}
+            ${sessionScope.transactionException.message}
+            <c:remove var="userInputException" scope="session"/>
+            <c:remove var="transactionException" scope="session"/>
             <input type="submit" value="Register!"/>
-        </div>
-    </form>
-</div>
-
-<!-- Field validation exceptions -->
-<div>
-    <span style="color: red;">
-        <c:forEach items="${sessionScope.fieldExceptions}" var="error">
-            ${error.message}<br/>
-        </c:forEach>
-        ${sessionScope.userAlreadyExistsException.message}
-        ${sessionScope.captchaValidationException.message}
-
-        <c:remove var="captchaValidationException" scope="session"/>
-        <c:remove var="fieldExceptions" scope="session"/>
-        <c:remove var="userAlreadyExistsException" scope="session"/>
-        <c:remove var="userDTO" scope="session"/>
+            <a href="login">Sign In</a>
     </span>
-</div>
+
+    </fieldset>
+</form>
+
 
 </body>
 </html>

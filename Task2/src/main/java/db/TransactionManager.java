@@ -19,21 +19,20 @@ public class TransactionManager {
 
     private DataSource usersDs;
 
-    public TransactionManager(DataSource dataSource) throws NamingException {
+    public TransactionManager(DataSource dataSource) {
         this.usersDs = dataSource;
     }
 
     public <T> T doTask(Transaction<T> transaction, int transactionIsolation) throws TransactionException, DuplicateInsertException, ValidationException {
         try {
             Connection connection = usersDs.getConnection();
-            connection.setAutoCommit(false);
             connection.setTransactionIsolation(transactionIsolation);
             ConnectionHolder.setConnection(connection);
             T result = transaction.execute();
             ConnectionHolder.getConnection().commit();
             return result;
         } catch (SQLException | DaoException e) {
-            LOGGER.error("Transactional exception (may be resource-handling exception " + e);
+            LOGGER.error("Transactional exception caused by {}.", e.getMessage());
             throw new TransactionException(e);
         }
     }

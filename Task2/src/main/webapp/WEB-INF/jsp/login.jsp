@@ -7,19 +7,22 @@
 </head>
 <body>
 <form action="login" method="post">
-    <label>Email</label>
-    <br/>
-    <input name="email" type="email" value="${sessionScope.loginDTO}"/>
-    <br/><br/><br/>
-    <label>Password</label>
-    <br/>
-    <input name="password" type="password"/>
-    <br/><br/><br/>
-    <input type="submit" value="Log In">
-    <a href="registration">Registration...</a>
-    <br/>
-    <span style="color: red">${sessionScope.loginError}</span>
-    <c:remove var="loginError" scope="session"/>
+    <fieldset>
+        <legend>Log in</legend>
+        Email
+        <br/>
+        <input name="email" type="email" value="${sessionScope.loginDTO}"/>
+        <br/><br/>
+        Password
+        <br/>
+        <input name="password" type="password"/>
+        <br/><br/>
+        <input type="submit" value="Log In">
+        <a href="registration">Registration...</a>
+        <br/>
+        <span style="color: red">${sessionScope.loginError}</span>
+        <c:remove var="loginError" scope="session"/>
+    </fieldset>
 </form>
 </body>
 </html>

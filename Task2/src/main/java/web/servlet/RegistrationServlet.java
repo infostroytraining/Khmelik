@@ -28,20 +28,19 @@ public class RegistrationServlet extends HttpServlet {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    //TODO make this property field
-    private static final String TOMCAT_WEBAPPS_FOLDER_RELATIVE_PATH = "../webapps/images/";
-
     private UserService userService;
     private GoogleReCaptchaValidationUtils googleReCaptchaValidationUtils;
+    private String imagesFolderRelativePath;
 
     @Override
     public void init() throws ServletException {
         userService = (UserService) getServletContext().getAttribute("userService");
         googleReCaptchaValidationUtils =
                 (GoogleReCaptchaValidationUtils) getServletContext().getAttribute("googleReCaptchaValidationUtils");
-
+        imagesFolderRelativePath = (String) getServletContext().getAttribute("imagesFolderRelativePath");
         if (userService == null || googleReCaptchaValidationUtils == null) {
-            LOGGER.fatal("Could not initialize servlet from application context");
+            LOGGER.fatal("Could not initialize servlet from application context. " +
+                    "UserService/googleRecapthcaUtils equal null).");
             throw new UnavailableException(
                     "Could not get user service or google captcha validator.");
         }
@@ -57,6 +56,7 @@ public class RegistrationServlet extends HttpServlet {
         if (!isMultipartFormat(req)) {
             resp.sendError(400);
         }
+        req.setCharacterEncoding("UTF-8");
 
         String email = req.getParameter("email");
         String name = req.getParameter("name");
@@ -66,7 +66,6 @@ public class RegistrationServlet extends HttpServlet {
         Part imagePart = req.getPart("image");
         String gRecaptchaResponse = req.getParameter("g-recaptcha-response");
         String simpleCaptchaAnswer = req.getParameter("simpleCaptchaAnswer");
-        LOGGER.debug("Captcha {}", simpleCaptchaAnswer);
 
         UserDTO userDTO = new UserDTO(email, name, surname);
         HttpSession session = req.getSession();
@@ -81,32 +80,23 @@ public class RegistrationServlet extends HttpServlet {
             user.setName(name);
             user.setSurname(surname);
             user.setPassword(password);
-            if (imagePart != null) user.setImage(imagePart.getSubmittedFileName());
+            user.setImage(imagePart.getSubmittedFileName());
 
             User registeredUser = userService.register(user);
-
             session.setAttribute("user", registeredUser);
-            if (imagePart != null) saveImage(imagePart, registeredUser.getImage());
+            if (registeredUser.getImage() != null)
+                saveImage(imagePart, registeredUser.getImage());
 
-            LOGGER.debug("User " + registeredUser.getEmail() + "has just successfully registered.");
             resp.sendRedirect("welcome");
-        } catch (CaptchaValidationException e) {
+        } catch (CaptchaValidationException | ValidationException | DuplicateInsertException e) {
             session.setAttribute("userDTO", userDTO);
-            session.setAttribute("captchaValidationException", e);
+            session.setAttribute("userInputException", e);
             resp.sendRedirect("registration");
-        } catch (ValidationException e) {
-            session.setAttribute("userDTO", userDTO);
-            session.setAttribute("fieldExceptions", e.getFieldExceptions());
-            resp.sendRedirect("registration");
-        } catch (DuplicateInsertException e) {
-            session.setAttribute("userDTO", userDTO);
-            session.setAttribute("userAlreadyExistsException", e);
+        } catch (TransactionException e) {
+            session.setAttribute("transactionException", e);
             resp.sendRedirect("registration");
         } catch (ServiceException e) {
             resp.sendError(500, "Service exception.");
-        } catch (TransactionException e) {
-            session.setAttribute("transactionError", e);
-            resp.sendRedirect("registration");
         }
     }
 
@@ -138,7 +128,7 @@ public class RegistrationServlet extends HttpServlet {
 
     private void saveImage(Part imagePart, String filePath) {
         try (InputStream imageInputStream = imagePart.getInputStream()) {
-            File imageFile = new File(TOMCAT_WEBAPPS_FOLDER_RELATIVE_PATH + filePath);
+            File imageFile = new File(imagesFolderRelativePath + filePath);
             if (!imageFile.exists()) {
                 if (imageFile.getParentFile().mkdirs()) LOGGER.debug("Image storage directory created.");
                 if (imageFile.createNewFile()) LOGGER.debug("Image file created on path " + filePath);

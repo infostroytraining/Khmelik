@@ -30,8 +30,8 @@ public class PostgreUserService implements UserService {
     public User register(User user) throws ValidationException, DuplicateInsertException, ServiceException, TransactionException {
         return transactionManager.doTask(() -> {
             userValidator.validate(user);
-            if (user.getImage() != null)
-                user.setImage(user.getName() + user.getSurname() + ".jpg");
+            user.setImage((user.getImage() == null || user.getImage().isEmpty()) ? null :
+                    user.getName() + user.getSurname() + ".jpg");
 
             if (!userDao.isAlreadyCreated(user)) {
                 return userDao.create(user);
@@ -47,5 +47,4 @@ public class PostgreUserService implements UserService {
         return transactionManager.doTask(() ->
                 userDao.getUserByUsername(username), Connection.TRANSACTION_READ_COMMITTED);
     }
-
 }

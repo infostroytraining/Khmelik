@@ -14,12 +14,16 @@
         <param-value>db</param-value>
     </context-param>
 
+    <context-param>
+        <param-name>imageFolder</param-name>
+        <param-value>../webapps/images</param-value>
+    </context-param>
+
     <jsp-config>
         <jsp-property-group>
             <url-pattern>*.jspf</url-pattern>
         </jsp-property-group>
     </jsp-config>
-
 
 
     <!-- SERVLETS -->

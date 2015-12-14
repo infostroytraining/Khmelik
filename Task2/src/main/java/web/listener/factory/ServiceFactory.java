@@ -18,10 +18,10 @@ import java.util.ServiceConfigurationError;
 
 public class ServiceFactory {
 
+    private static final Logger LOGGER = LogManager.getLogger();
+
     private static final String MEMORY = "memory";
     private static final String DB = "db";
-
-    private static final Logger LOGGER = LogManager.getLogger();
     private static final String DB_CONNECTION_CONFIG = "java:comp/env/jdbc/users";
 
     public static UserService getUserService(String type) {
@@ -44,7 +44,7 @@ public class ServiceFactory {
             InitialContext initContext = new InitialContext();
             return (DataSource) initContext.lookup(DB_CONNECTION_CONFIG);
         } catch (NamingException e) {
-            LOGGER.fatal("Could not load postgres connection pool");
+            LOGGER.fatal("Could not load postgres connection pool.");
             throw new ServiceConfigurationError("Could not load postgres connection pool.");
         }
     }
@@ -59,13 +59,7 @@ public class ServiceFactory {
         DataSource dataSource = loadPostgreConnectionPool();
         UserDao userDao = new PostgreUserDao();
         UserValidator validator = new UserValidator();
-
-        TransactionManager transactionManager = null;
-        try {
-            transactionManager = new TransactionManager(dataSource);
-        } catch (NamingException e) {
-            LOGGER.fatal("Could not connect to connection pool.");
-        }
+        TransactionManager transactionManager = new TransactionManager(dataSource);
 
         return new PostgreUserService(userDao, validator, transactionManager);
     }
