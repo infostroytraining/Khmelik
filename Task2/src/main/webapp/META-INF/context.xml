@@ -1,3 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Context path="/">
+<Context>
+        <Resource name="jdbc/users"
+                  auth="Container"
+                  type="javax.sql.DataSource"
+                  maxActive="100" maxIdle="30" maxWait="10000"
+                  username="postgres" password="postgres"
+                  driverClassName="org.postgresql.Driver"
+                  defaultAutoCommit="false"
+                  defaultTransactionIsolation="READ_COMMITTED"
+                  url="jdbc:postgresql://localhost:5432/infostroy_task_db"
+                  connectionProperties="useUnicode=yes;characterEncoding=utf8;"
+                />
 </Context>

@@ -1,16 +1,17 @@
 package service.validators;
 
 import entity.User;
-import exceptions.FieldError;
-import exceptions.ValidationException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import service.exceptions.FieldError;
+import service.exceptions.ValidationException;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserValidator implements Validator<User> {
 
-    private static final Logger LOGGER = Logger.getLogger(UserValidator.class);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     @Override
     public void validate(User user) throws ValidationException {

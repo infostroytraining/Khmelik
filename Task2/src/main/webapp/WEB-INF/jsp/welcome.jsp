@@ -9,7 +9,7 @@
     Welcome ${sessionScope.user.name} ${sessionScope.user.surname}!
     <br/>
     <c:if test="${not empty sessionScope.user.image}">
-        <img src="${sessionScope.user.image}"/>
+        <img src="../images/${sessionScope.user.image}"/>
     </c:if>
 </div>
 <br/>

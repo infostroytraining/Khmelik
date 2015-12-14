@@ -1,9 +1,11 @@
 package service.mock_impl;
 
 import dao.UserDao;
+import dao.exceptions.DaoException;
 import entity.User;
-import exceptions.ValidationException;
-import exceptions.DuplicateInsertException;
+import service.exceptions.ServiceException;
+import service.exceptions.ValidationException;
+import service.exceptions.DuplicateInsertException;
 import service.UserService;
 import service.validators.Validator;
 
@@ -18,15 +20,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User register(User user) throws ValidationException, DuplicateInsertException {
+    public User register(User user) throws ValidationException, DuplicateInsertException, ServiceException {
         userValidator.validate(user);
         if (user.getImage() != null) {
             user.setImage("/images/" + user.getName() + user.getSurname() + ".jpg");
         }
-        if (!userDao.isAlreadyCreated(user)) {
-            return userDao.create(user);
-        } else {
-            throw new DuplicateInsertException();
+        try {
+            if (!userDao.isAlreadyCreated(user)) {
+                return userDao.create(user);
+            } else {
+                throw new DuplicateInsertException();
+            }
+        } catch (DaoException e) {
+            throw new ServiceException();
         }
     }
 

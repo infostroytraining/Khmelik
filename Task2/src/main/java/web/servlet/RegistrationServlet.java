@@ -1,13 +1,16 @@
 package web.servlet;
 
+import db.exceptions.TransactionException;
 import dto.UserDTO;
 import entity.User;
-import exceptions.CaptchaValidationException;
-import exceptions.FieldError;
-import exceptions.ValidationException;
-import exceptions.DuplicateInsertException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import service.exceptions.ServiceException;
+import web.exceptions.CaptchaValidationException;
+import service.exceptions.FieldError;
+import service.exceptions.ValidationException;
+import service.exceptions.DuplicateInsertException;
 import nl.captcha.Captcha;
-import org.apache.log4j.Logger;
 import service.UserService;
 import service.validators.UserField;
 import web.captcha.GoogleReCaptchaValidationUtils;
@@ -23,10 +26,10 @@ import java.util.List;
 
 public class RegistrationServlet extends HttpServlet {
 
-    private static final Logger LOGGER = Logger.getLogger(RegistrationServlet.class);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     //TODO make this property field
-    private static final String TOMCAT_WEBAPPS_FOLDER_RELATIVE_PATH = "../webapps";
+    private static final String TOMCAT_WEBAPPS_FOLDER_RELATIVE_PATH = "../webapps/images/";
 
     private UserService userService;
     private GoogleReCaptchaValidationUtils googleReCaptchaValidationUtils;
@@ -38,7 +41,7 @@ public class RegistrationServlet extends HttpServlet {
                 (GoogleReCaptchaValidationUtils) getServletContext().getAttribute("googleReCaptchaValidationUtils");
 
         if (userService == null || googleReCaptchaValidationUtils == null) {
-            LOGGER.error("Could not initialize servlet from application context");
+            LOGGER.fatal("Could not initialize servlet from application context");
             throw new UnavailableException(
                     "Could not get user service or google captcha validator.");
         }
@@ -63,6 +66,7 @@ public class RegistrationServlet extends HttpServlet {
         Part imagePart = req.getPart("image");
         String gRecaptchaResponse = req.getParameter("g-recaptcha-response");
         String simpleCaptchaAnswer = req.getParameter("simpleCaptchaAnswer");
+        LOGGER.debug("Captcha {}", simpleCaptchaAnswer);
 
         UserDTO userDTO = new UserDTO(email, name, surname);
         HttpSession session = req.getSession();
@@ -97,6 +101,11 @@ public class RegistrationServlet extends HttpServlet {
         } catch (DuplicateInsertException e) {
             session.setAttribute("userDTO", userDTO);
             session.setAttribute("userAlreadyExistsException", e);
+            resp.sendRedirect("registration");
+        } catch (ServiceException e) {
+            resp.sendError(500, "Service exception.");
+        } catch (TransactionException e) {
+            session.setAttribute("transactionError", e);
             resp.sendRedirect("registration");
         }
     }

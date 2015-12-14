@@ -1,6 +1,7 @@
 package dao.mock_impl;
 
 import dao.UserDao;
+import dao.exceptions.DaoException;
 import entity.User;
 
 import java.util.*;
@@ -46,5 +47,12 @@ public class UserDaoMock implements UserDao {
         return users.stream().anyMatch(user ->
                 user.getEmail().equals(entity.getEmail()) ||
                         (user.getName().equals(entity.getName()) && user.getSurname().equals(entity.getSurname())));
+    }
+
+    @Override
+    public User getUserByUsername(String username) throws DaoException {
+        Optional<User> result = users.stream().filter(user ->
+                username.equals(user.getEmail())).findFirst();
+        return result.get();
     }
 }

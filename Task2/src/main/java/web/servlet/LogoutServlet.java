@@ -1,7 +1,9 @@
 package web.servlet;
 
 import entity.User;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -12,7 +14,7 @@ import java.io.IOException;
 
 public class LogoutServlet extends HttpServlet {
 
-    private static final Logger LOGGER = Logger.getLogger(LogoutServlet.class);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -21,6 +23,6 @@ public class LogoutServlet extends HttpServlet {
         if (session != null) {
             session.invalidate();
         }
-        resp.sendRedirect("registration");
+        resp.sendRedirect("login");
     }
 }

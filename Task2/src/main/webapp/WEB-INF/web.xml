@@ -9,6 +9,11 @@
         <listener-class>web.listener.AppContextListener</listener-class>
     </listener>
 
+    <context-param>
+        <param-name>storage</param-name>
+        <param-value>db</param-value>
+    </context-param>
+
     <jsp-config>
         <jsp-property-group>
             <url-pattern>*.jspf</url-pattern>
@@ -35,6 +40,17 @@
         <url-pattern>/registration</url-pattern>
     </servlet-mapping>
 
+    <!-- Login Servlet -->
+    <servlet>
+        <servlet-name>LoginServlet</servlet-name>
+        <servlet-class>web.servlet.LoginServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>LoginServlet</servlet-name>
+        <url-pattern>/login</url-pattern>
+    </servlet-mapping>
+
     <!-- Logout Servlet -->
     <servlet>
         <servlet-name>LogoutServlet</servlet-name>
@@ -44,6 +60,17 @@
     <servlet-mapping>
         <servlet-name>LogoutServlet</servlet-name>
         <url-pattern>/logout</url-pattern>
+    </servlet-mapping>
+
+    <!-- SimpleCaptcha Servlet -->
+    <servlet>
+        <servlet-name>SimpleCaptchaServlet</servlet-name>
+        <servlet-class>nl.captcha.servlet.SimpleCaptchaServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>SimpleCaptchaServlet</servlet-name>
+        <url-pattern>/simpleCaptcha.png</url-pattern>
     </servlet-mapping>
 
 
@@ -59,6 +86,17 @@
         <url-pattern>/welcome</url-pattern>
     </servlet-mapping>
 
+    <!-- Login JSP -->
+    <servlet>
+        <servlet-name>LoginJSP</servlet-name>
+        <jsp-file>/WEB-INF/jsp/login.jsp</jsp-file>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>LoginJSP</servlet-name>
+        <url-pattern>/loginJSP</url-pattern>
+    </servlet-mapping>
+
     <!-- Registration JSP -->
     <servlet>
         <servlet-name>RegistrationJSP</servlet-name>
@@ -68,17 +106,6 @@
     <servlet-mapping>
         <servlet-name>RegistrationJSP</servlet-name>
         <url-pattern>/registrationJSP</url-pattern>
-    </servlet-mapping>
-
-
-    <servlet>
-        <servlet-name>SimpleCaptchaServlet</servlet-name>
-        <servlet-class>nl.captcha.servlet.SimpleCaptchaServlet</servlet-class>
-    </servlet>
-    
-    <servlet-mapping>
-        <servlet-name>SimpleCaptchaServlet</servlet-name>
-        <url-pattern>/simpleCaptcha.png</url-pattern>
     </servlet-mapping>
 
     <!-- FILTERS -->

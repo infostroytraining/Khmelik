@@ -1,6 +1,6 @@
 package service.validators;
 
-import exceptions.ValidationException;
+import service.exceptions.ValidationException;
 
 public interface Validator<T> {
 

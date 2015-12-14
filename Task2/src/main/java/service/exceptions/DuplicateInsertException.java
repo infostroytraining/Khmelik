@@ -1,4 +1,4 @@
-package exceptions;
+package service.exceptions;
 
 public class DuplicateInsertException extends Exception {
 

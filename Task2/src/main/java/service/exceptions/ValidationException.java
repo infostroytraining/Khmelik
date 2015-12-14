@@ -1,4 +1,4 @@
-package exceptions;
+package service.exceptions;
 
 import java.util.List;
 

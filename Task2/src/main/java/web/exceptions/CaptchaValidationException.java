@@ -1,4 +1,4 @@
-package exceptions;
+package web.exceptions;
 
 public class CaptchaValidationException extends Exception {
 
