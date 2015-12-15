@@ -11,16 +11,16 @@
             <PatternLayout
                     pattern="%highlight{%d{HH:mm:ss.SSS} [%t] %-5level %logger{36}:%method:%line - %msg%n}{FATAL=white, ERROR=red, WARN=blue, INFO=black, DEBUG=green, TRACE=blue}"/>
         </File>
-        <RestServerAppender name="serverAppender" server="http://localhost:8080/server-log-app/logs" >
+        <ServerAppender name="serverAppender" server="http://localhost:8080/server-log-app/logs" >
             <PatternLayout
                     pattern="%highlight{%d{HH:mm:ss.SSS} [%t] %-5level %logger{36}:%method:%line - %msg%n}{FATAL=white, ERROR=red, WARN=blue, INFO=black, DEBUG=green, TRACE=blue}"/>
-        </RestServerAppender>
+        </ServerAppender>
     </Appenders>
 
     <Loggers>
-        <Root level="all">
+        <Root level="INFO">
             <AppenderRef ref="Console"/>
-            <AppenderRef ref="serverAppender"/>
+            <!--<AppenderRef ref="serverAppender"/>-->
         </Root>
         <Logger name="dao">
             <AppenderRef ref="DaoLogsFile"/>

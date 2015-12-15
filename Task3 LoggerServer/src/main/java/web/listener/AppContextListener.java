@@ -25,8 +25,10 @@ public class AppContextListener implements ServletContextListener {
         logger.info("AppContext began initializing.");
         ServletContext context = sce.getServletContext();
 
+        //DAO
         LoggingDao loggingDao = new PostgreLoggingDao();
 
+        //Creating dataSource
         InitialContext initContext;
         DataSource logDbDataSource = null;
         try {
@@ -36,9 +38,11 @@ public class AppContextListener implements ServletContextListener {
             logger.fatal("Cannot connect to db.", e);
         }
 
+        //Services and transaction manager
         TransactionManager transactionManager = new TransactionManager(logDbDataSource);
         LoggingService loggingService = new PostgreLoggingService(loggingDao, transactionManager);
 
+        //Put beans into context
         context.setAttribute("loggingService", loggingService);
         logger.info("AppContext initialized.");
     }

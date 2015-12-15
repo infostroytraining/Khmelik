@@ -16,9 +16,9 @@
     </tr>
   </thead>
   <tbody>
-    <c:forEach items="${sessionScope.logs}" var="log">
-      <tr style="color:${log.color}">
-        <td>${log.date}</td>
+    <c:forEach items="${requestScope.logs}" var="log">
+      <tr style="color:${log.type.color}">
+        <td>${log.dateTime}</td>
         <td>${log.type}</td>
         <td>${log.message}</td>
         <td>${log.name}</td>

@@ -88,11 +88,14 @@ public class RegistrationServlet extends HttpServlet {
                 saveImage(imagePart, registeredUser.getImage());
 
             resp.sendRedirect("welcome");
-        } catch (CaptchaValidationException | ValidationException | DuplicateInsertException e) {
+        } catch (CaptchaValidationException | DuplicateInsertException e) {
             session.setAttribute("userDTO", userDTO);
-            session.setAttribute("userInputException", e);
+            session.setAttribute("captchaDuplicationException", e);
             resp.sendRedirect("registration");
-        } catch (TransactionException e) {
+        } catch (ValidationException e) {
+            session.setAttribute("userDTO", userDTO);
+            session.setAttribute("validationException", e);
+            resp.sendRedirect("registration");        } catch (TransactionException e) {
             session.setAttribute("transactionException", e);
             resp.sendRedirect("registration");
         } catch (ServiceException e) {

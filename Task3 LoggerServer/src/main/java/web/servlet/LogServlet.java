@@ -1,11 +1,15 @@
 package web.servlet;
 
 
+import com.fatboyindustrial.gsonjodatime.Converters;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import db.exceptions.TransactionException;
 import entity.Log;
 import entity.Type;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joda.time.DateTime;
 import service.LoggingService;
 
 import javax.servlet.ServletException;
@@ -14,8 +18,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class LogServlet extends HttpServlet {
@@ -36,11 +38,19 @@ public class LogServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
         List<Log> logs;
+        String format = req.getParameter("format");
         try {
             logs = loggingService.getLogs();
-            req.setAttribute("logs", logs);
-            req.getRequestDispatcher("logsJSP").forward(req, resp);
+            if ("pretty".equals(format)) {
+                Gson gson = Converters.registerDateTime(new GsonBuilder()).create();
+                String jsonLogs = gson.toJson(logs);
+                resp.getWriter().write(jsonLogs);
+            } else {
+                req.setAttribute("logs", logs);
+                req.getRequestDispatcher("logsJSP").forward(req, resp);
+            }
         } catch (TransactionException e) {
             logger.error("Getting logs results into transaction exception.", e);
             resp.sendError(500);
@@ -52,20 +62,18 @@ public class LogServlet extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
         //get parameters
         String name = req.getParameter("name");
-        long date = Long.parseLong(req.getParameter("date"));
+        long dateMills = Long.parseLong(req.getParameter("date"));
         String typeName = req.getParameter("type");
         String message = req.getParameter("message");
 
         Log log = new Log();
         log.setName(name);
         log.setMessage(message);
-        log.setDate(new Date(date));
+        log.setDateTime(new DateTime(dateMills));
         log.setType(Type.valueOf(typeName));
 
         try {
             loggingService.saveLog(log);
-            resp.setStatus(200);
-            resp.sendRedirect("logs");
         } catch (TransactionException e) {
             logger.error("Saving log results into transaction exception.", e);
             resp.sendError(500);

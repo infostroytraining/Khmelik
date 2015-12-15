@@ -34,11 +34,6 @@ public class PostgreLoggingService implements LoggingService {
     @Override
     public List<Log> getLogs() throws TransactionException {
         logger.entry();
-        return transactionManager.doTask(new Transaction<List<Log>>() {
-                    @Override
-                    public List<Log> execute() throws DaoException {
-                        return loggingDao.getAll();
-                    }
-                }, Connection.TRANSACTION_READ_COMMITTED);
+        return transactionManager.doTask(() -> loggingDao.getAll(), Connection.TRANSACTION_READ_COMMITTED);
     }
 }

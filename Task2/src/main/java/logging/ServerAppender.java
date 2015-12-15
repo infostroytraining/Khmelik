@@ -3,6 +3,7 @@ package logging;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -25,15 +26,21 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-@Plugin(name = "RestServerAppender", category = "Core", elementType = "appender", printObject = true)
-public final class RestServerAppender extends AbstractAppender {
+
+//TODO this custom appender aint working correct!
+@Plugin(name = "ServerAppender", category = "Core", elementType = "appender", printObject = true)
+public final class ServerAppender extends AbstractAppender {
+
+    private static final int CONNECTION_TIMEOUT = 5 * 1000;
 
     private final ReadWriteLock rwLock = new ReentrantReadWriteLock();
     private final Lock readLock = rwLock.readLock();
 
     private String loggerServerURL;
+    private HttpClient client = HttpClientBuilder.create().build();
+    private HttpPost post;
 
-    protected RestServerAppender(String name, Filter filter, Layout<? extends Serializable> layout, boolean ignoreExceptions, String serverURL) {
+    protected ServerAppender(String name, Filter filter, Layout<? extends Serializable> layout, boolean ignoreExceptions, String serverURL) {
         super(name, filter, layout, ignoreExceptions);
         loggerServerURL = serverURL;
     }
@@ -41,9 +48,13 @@ public final class RestServerAppender extends AbstractAppender {
     @Override
     public void append(LogEvent event) {
         readLock.lock();
-        HttpClient client = HttpClientBuilder.create().build();
-        HttpPost post = new HttpPost(loggerServerURL);
-
+        post = new HttpPost(loggerServerURL);
+        RequestConfig config = RequestConfig.custom()
+                .setConnectionRequestTimeout(CONNECTION_TIMEOUT)
+                .setConnectTimeout(CONNECTION_TIMEOUT)
+                .setSocketTimeout(CONNECTION_TIMEOUT)
+                .build();
+        post.setConfig(config);
         List<NameValuePair> urlParameters = new ArrayList<>();
         urlParameters.add(new BasicNameValuePair("name", "logEvent"));
         urlParameters.add(new BasicNameValuePair("message", event.getMessage().getFormattedMessage()));
@@ -51,16 +62,20 @@ public final class RestServerAppender extends AbstractAppender {
         urlParameters.add(new BasicNameValuePair("type", event.getLevel().name()));
         try {
             post.setEntity(new UrlEncodedFormEntity(urlParameters));
-            client.execute(post);
+            HttpResponse response = client.execute(post);
+            if (response.getStatusLine().getStatusCode() != 200) {
+                LOGGER.error("Server did not response 200.");
+            }
         } catch (IOException e) {
-            LOGGER.error("Server appender is not working.", e);
-        } finally {
+            LOGGER.error("Server appender is not working.");
+        }
+        finally {
             readLock.unlock();
         }
     }
 
     @PluginFactory
-    public static RestServerAppender createAppender(
+    public static ServerAppender createAppender(
             @PluginAttribute("name") String name,
             @PluginAttribute("server") String serverURL,
             @PluginElement("Filter") final Filter filter,
@@ -76,6 +91,6 @@ public final class RestServerAppender extends AbstractAppender {
         if (layout == null) {
             layout = PatternLayout.createDefaultLayout();
         }
-        return new RestServerAppender(name, filter, layout, true, serverURL);
+        return new ServerAppender(name, filter, layout, true, serverURL);
     }
 }

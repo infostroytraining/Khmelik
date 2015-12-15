@@ -35,6 +35,7 @@ public class LoginFilter implements Filter {
         HttpServletResponse servletResponse = (HttpServletResponse) response;
         logger.entry(((HttpServletRequest) request).getRequestURI());
         if(isValidUrl(servletRequest)){
+            logger.debug("Inside validated url.");
             chain.doFilter(request, response);
         } else {
             logger.info("No user logged in.");

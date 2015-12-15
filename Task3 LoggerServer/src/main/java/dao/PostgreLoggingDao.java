@@ -6,15 +6,16 @@ import entity.Log;
 import entity.Type;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joda.time.DateTime;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-//TODO dao
 public class PostgreLoggingDao implements LoggingDao {
 
     private static final Logger logger = LogManager.getLogger();
+
     public static final String INSERT_LOG_QUERY =
             "INSERT INTO log(name, message, type, date) VALUES (?, ?, ?, ?)";
     public static final String SELECT_ALL_LOGS_QUERY = "SELECT * FROM log";
@@ -29,19 +30,19 @@ public class PostgreLoggingDao implements LoggingDao {
             preparedStatement.setString(1, entity.getName());
             preparedStatement.setString(2, entity.getMessage());
             preparedStatement.setString(3, entity.getType().name().toLowerCase());
-            preparedStatement.setTimestamp(4, new Timestamp(entity.getDate().getTime()));
+            preparedStatement.setTimestamp(4, new Timestamp(entity.getDateTime().getMillis()));
             preparedStatement.executeUpdate();
 
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
-            if(resultSet.next()){
+            if (resultSet.next()) {
                 entity.setIdLog(resultSet.getInt(1));
             }
         } catch (SQLException e) {
-                logger.error("Cannot insert log into database.", e);
-                throw new DaoException(e);
-            }
-            logger.exit();
-        return null;
+            logger.error("Cannot insert log into database.", e);
+            throw new DaoException(e);
+        }
+        logger.exit();
+        return entity;
     }
 
     @Override
@@ -57,12 +58,12 @@ public class PostgreLoggingDao implements LoggingDao {
         try {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(SELECT_ALL_LOGS_QUERY);
-            while(resultSet.next()){
+            while (resultSet.next()) {
                 Log tempLog = new Log();
                 tempLog.setIdLog(resultSet.getInt(1));
                 tempLog.setName(resultSet.getString(2));
-                tempLog.setType(Type.valueOf(resultSet.getString(3)));
-                tempLog.setDate(new Date(resultSet.getTimestamp(4).getTime()));
+                tempLog.setType(Type.valueOf(resultSet.getString(3).toUpperCase()));
+                tempLog.setDateTime(new DateTime(resultSet.getTimestamp(4).getTime()));
                 tempLog.setMessage(resultSet.getString(5));
                 logs.add(tempLog);
             }

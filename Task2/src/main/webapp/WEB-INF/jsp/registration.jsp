@@ -45,14 +45,15 @@
     <fieldset>
         <legend>Submit and validation errors</legend>
             <span style="color: red;">
-            <c:if test="${not empty sessionScope.userInputException.fieldExceptions}">
-                <c:forEach items="${sessionScope.userInputException.fieldExceptions}" var="error">
+            <c:if test="${not empty sessionScope.validationException.fieldExceptions}">
+                <c:forEach items="${sessionScope.validationException.fieldExceptions}" var="error">
                     ${error.message}<br/>
                 </c:forEach>
             </c:if>
             ${sessionScope.userInputException.message}
             ${sessionScope.transactionException.message}
-            <c:remove var="userInputException" scope="session"/>
+            <c:remove var="validationException" scope="session"/>
+            <c:remove var="captchaDuplicationException" scope="session"/>
             <c:remove var="transactionException" scope="session"/>
             <input type="submit" value="Register!"/>
             <a href="login">Sign In</a>
