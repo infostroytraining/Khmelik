@@ -58,13 +58,8 @@ public class PostgreUserDao implements UserDao {
             preparedStatement.setString(1, username);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                resultUser = new User();
-                resultUser.setId(resultSet.getInt(1));
-                resultUser.setEmail(resultSet.getString(2));
-                resultUser.setName(resultSet.getString(3));
-                resultUser.setSurname(resultSet.getString(4));
-                resultUser.setPassword(resultSet.getString(5));
-                resultUser.setImage(resultSet.getString(6));
+                resultUser = getUserFromResultSet(resultSet);
+
             }
         } catch (SQLException e) {
             logger.error("Cannot find user in database.", e);
@@ -110,13 +105,7 @@ public class PostgreUserDao implements UserDao {
             preparedStatement.setInt(1, idEntity);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                resultUser = new User();
-                resultUser.setId(resultSet.getInt(1));
-                resultUser.setEmail(resultSet.getString(2));
-                resultUser.setName(resultSet.getString(3));
-                resultUser.setSurname(resultSet.getString(4));
-                resultUser.setPassword(resultSet.getString(5));
-                resultUser.setImage(resultSet.getString(6));
+                resultUser = getUserFromResultSet(resultSet);
             }
         } catch (SQLException e) {
             logger.error("Cannot get user from database.", e);
@@ -134,13 +123,7 @@ public class PostgreUserDao implements UserDao {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(SELECT_ALL_USERS_QUERY);
             while (resultSet.next()) {
-                User tempUser = new User();
-                tempUser.setId(resultSet.getInt(1));
-                tempUser.setEmail(resultSet.getString(2));
-                tempUser.setName(resultSet.getString(3));
-                tempUser.setSurname(resultSet.getString(4));
-                tempUser.setPassword(resultSet.getString(5));
-                tempUser.setImage(resultSet.getString(6));
+                User tempUser = getUserFromResultSet(resultSet);
                 resultUsers.add(tempUser);
             }
         } catch (SQLException e) {
@@ -188,5 +171,16 @@ public class PostgreUserDao implements UserDao {
         }
         logger.exit(result);
         return result;
+    }
+
+    private User getUserFromResultSet(ResultSet resultSet) throws SQLException {
+        User user = new User();
+        user.setId(resultSet.getInt(1));
+        user.setEmail(resultSet.getString(2));
+        user.setName(resultSet.getString(3));
+        user.setSurname(resultSet.getString(4));
+        user.setPassword(resultSet.getString(5));
+        user.setImage(resultSet.getString(6));
+        return user;
     }
 }

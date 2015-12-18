@@ -8,6 +8,17 @@ public class User extends Entity {
     private String surname;
     private String image;
 
+    public User() {
+    }
+
+    public User(String email, String password, String name, String surname, String image) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.surname = surname;
+        this.image = image;
+    }
+
     public String getEmail() {
         return email;
     }

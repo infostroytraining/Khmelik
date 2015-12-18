@@ -28,6 +28,7 @@ public class TransactionManager {
             ConnectionHolder.setConnection(connection);
             T result = transaction.execute();
             ConnectionHolder.getConnection().commit();
+            connection.close();
             return result;
         } catch (SQLException | DaoException e) {
             logger.error("Transactional exception caused by {}.", e.getMessage());

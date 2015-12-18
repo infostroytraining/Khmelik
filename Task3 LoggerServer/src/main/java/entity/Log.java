@@ -10,6 +10,15 @@ public class Log {
     private DateTime dateTime;
     private Type type;
 
+    public Log(){}
+
+    public Log(String name, String message, DateTime dateTime, Type type) {
+        this.name = name;
+        this.message = message;
+        this.dateTime = dateTime;
+        this.type = type;
+    }
+
     public int getIdLog() {
         return idLog;
     }

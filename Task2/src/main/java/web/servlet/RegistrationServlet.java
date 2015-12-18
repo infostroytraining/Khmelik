@@ -26,7 +26,8 @@ import java.util.List;
 
 public class RegistrationServlet extends HttpServlet {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
+    private static final String USER_DTO_ATTRIBUTE_NAME = "userDTO";
 
     private UserService userService;
     private GoogleReCaptchaValidationUtils googleReCaptchaValidationUtils;
@@ -39,7 +40,7 @@ public class RegistrationServlet extends HttpServlet {
                 (GoogleReCaptchaValidationUtils) getServletContext().getAttribute("googleReCaptchaValidationUtils");
         imagesFolderRelativePath = (String) getServletContext().getAttribute("imagesFolderRelativePath");
         if (userService == null || googleReCaptchaValidationUtils == null) {
-            LOGGER.fatal("Could not initialize servlet from application context. " +
+            logger.fatal("Could not initialize servlet from application context. " +
                     "UserService/googleRecapthcaUtils equal null).");
             throw new UnavailableException(
                     "Could not get user service or google captcha validator.");
@@ -59,10 +60,10 @@ public class RegistrationServlet extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
 
         String email = req.getParameter("email");
-        String name = req.getParameter("name");
-        String surname = req.getParameter("surname");
         String password = req.getParameter("password");
         String confirmedPassword = req.getParameter("confirmedPassword");
+        String name = req.getParameter("name");
+        String surname = req.getParameter("surname");
         Part imagePart = req.getPart("image");
         String gRecaptchaResponse = req.getParameter("g-recaptcha-response");
         String simpleCaptchaAnswer = req.getParameter("simpleCaptchaAnswer");
@@ -75,27 +76,22 @@ public class RegistrationServlet extends HttpServlet {
             validateGoogleCaptcha(gRecaptchaResponse);
             validateSimpleCaptcha(simpleCaptchaAnswer, session);
 
-            User user = new User();
-            user.setEmail(email);
-            user.setName(name);
-            user.setSurname(surname);
-            user.setPassword(password);
-            user.setImage(imagePart.getSubmittedFileName());
-
+            User user = new User(email, password, name, surname, imagePart.getSubmittedFileName());
             User registeredUser = userService.register(user);
             session.setAttribute("user", registeredUser);
             if (registeredUser.getImage() != null)
                 saveImage(imagePart, registeredUser.getImage());
-
+            logger.info("User {} has ben successfully registered", user.getEmail());
             resp.sendRedirect("welcome");
         } catch (CaptchaValidationException | DuplicateInsertException e) {
-            session.setAttribute("userDTO", userDTO);
+            session.setAttribute(USER_DTO_ATTRIBUTE_NAME, userDTO);
             session.setAttribute("captchaDuplicationException", e);
             resp.sendRedirect("registration");
         } catch (ValidationException e) {
-            session.setAttribute("userDTO", userDTO);
+            session.setAttribute(USER_DTO_ATTRIBUTE_NAME, userDTO);
             session.setAttribute("validationException", e);
-            resp.sendRedirect("registration");        } catch (TransactionException e) {
+            resp.sendRedirect("registration");
+        } catch (TransactionException e) {
             session.setAttribute("transactionException", e);
             resp.sendRedirect("registration");
         } catch (ServiceException e) {
@@ -133,16 +129,16 @@ public class RegistrationServlet extends HttpServlet {
         try (InputStream imageInputStream = imagePart.getInputStream()) {
             File imageFile = new File(imagesFolderRelativePath + filePath);
             if (!imageFile.exists()) {
-                if (imageFile.getParentFile().mkdirs()) LOGGER.debug("Image storage directory created.");
-                if (imageFile.createNewFile()) LOGGER.debug("Image file created on path " + filePath);
+                if (imageFile.getParentFile().mkdirs()) logger.debug("Image storage directory created.");
+                if (imageFile.createNewFile()) logger.debug("Image file created on path " + filePath);
             }
             Files.copy(imageInputStream, imageFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             Thread.sleep(500);  //Time for image to copy (otherwise it won't be displayed when redirecting).
         } catch (IOException e) {
-            LOGGER.error("Can not create/write into image file. Image saving exception."
+            logger.error("Can not create/write into image file. Image saving exception."
                     + e.getLocalizedMessage());
         } catch (InterruptedException e) {
-            LOGGER.error("Interrupted exception on waiting until file will load on server.");
+            logger.error("Interrupted exception on waiting until file will load on server.");
         }
     }
 }

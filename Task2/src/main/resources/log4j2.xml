@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN" packages="logging">
+<Configuration status="INFO" packages="logging">
 
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
@@ -11,17 +11,26 @@
             <PatternLayout
                     pattern="%highlight{%d{HH:mm:ss.SSS} [%t] %-5level %logger{36}:%method:%line - %msg%n}{FATAL=white, ERROR=red, WARN=blue, INFO=black, DEBUG=green, TRACE=blue}"/>
         </File>
-        <ServerAppender name="serverAppender" server="http://localhost:8080/server-log-app/logs" >
+        <ServerAppender name="serverAppender" server="http://25.161.210.164:8080/server-log-app/logs">
             <PatternLayout
                     pattern="%highlight{%d{HH:mm:ss.SSS} [%t] %-5level %logger{36}:%method:%line - %msg%n}{FATAL=white, ERROR=red, WARN=blue, INFO=black, DEBUG=green, TRACE=blue}"/>
         </ServerAppender>
+
+        <Async name="Async" shutdownTimeout="30000">
+            <AppenderRef ref="serverAppender"/>
+        </Async>
     </Appenders>
 
     <Loggers>
         <Root level="INFO">
             <AppenderRef ref="Console"/>
-            <!--<AppenderRef ref="serverAppender"/>-->
+            <AppenderRef ref="Async"/>
         </Root>
+
+        <Logger name="httpSernder" level="TRACE">
+            <AppenderRef ref="Console" />
+        </Logger>
+
         <Logger name="dao">
             <AppenderRef ref="DaoLogsFile"/>
         </Logger>

@@ -39,6 +39,7 @@ public class LogServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
+        logger.info("Get /logs request entered.");
         List<Log> logs;
         String format = req.getParameter("format");
         try {
@@ -59,21 +60,16 @@ public class LogServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setCharacterEncoding("UTF-8");
-        //get parameters
         String name = req.getParameter("name");
         long dateMills = Long.parseLong(req.getParameter("date"));
         String typeName = req.getParameter("type");
         String message = req.getParameter("message");
 
-        Log log = new Log();
-        log.setName(name);
-        log.setMessage(message);
-        log.setDateTime(new DateTime(dateMills));
-        log.setType(Type.valueOf(typeName));
+        Log log = new Log(name, message, new DateTime(dateMills), Type.valueOf(typeName));
 
         try {
             loggingService.saveLog(log);
+            logger.info("Log '{}' saved", log.getMessage());
         } catch (TransactionException e) {
             logger.error("Saving log results into transaction exception.", e);
             resp.sendError(500);

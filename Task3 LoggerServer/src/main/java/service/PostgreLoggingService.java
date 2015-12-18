@@ -28,12 +28,12 @@ public class PostgreLoggingService implements LoggingService {
     @Override
     public Log saveLog(Log log) throws TransactionException {
         logger.entry(log);
-        return transactionManager.doTask(() -> loggingDao.create(log), Connection.TRANSACTION_READ_COMMITTED);
+        return transactionManager.doTask(() -> loggingDao.create(log), Connection.TRANSACTION_READ_UNCOMMITTED);
     }
 
     @Override
     public List<Log> getLogs() throws TransactionException {
         logger.entry();
-        return transactionManager.doTask(() -> loggingDao.getAll(), Connection.TRANSACTION_READ_COMMITTED);
+        return transactionManager.doTask(() -> loggingDao.getAll(), Connection.TRANSACTION_READ_UNCOMMITTED);
     }
 }
