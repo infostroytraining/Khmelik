@@ -21,18 +21,18 @@ public class FindFirstThreeLongestCommandTest {
     @Test
     public void testExecute() throws IOException {
         assertTrue(
-                TEST_FILE_LONGEST.equals(command.execute(TEST_FILE_PATH)) ||
-                        TEST_FILE_LONGEST_POSSIBLE_ANSWER.equals(command.execute(TEST_FILE_PATH)));
+                TEST_FILE_LONGEST.equals(command.execute(TEST_FILE_PATH, true)) ||
+                        TEST_FILE_LONGEST_POSSIBLE_ANSWER.equals(command.execute(TEST_FILE_PATH, true)));
     }
 
     @Test
     public void testExecuteOnEmptyFile() throws IOException {
         assertEquals(FindFirstThreeLongestCommand.NO_WORDS_MESSAGE,
-                command.execute(EMPTY_FILE_PATH));
+                command.execute(EMPTY_FILE_PATH, true));
     }
 
     @Test(expected = IOException.class)
     public void testExecuteOnNoFile() throws IOException {
-        command.execute(NO_FILE_PATH);
+        command.execute(NO_FILE_PATH, true);
     }
 }

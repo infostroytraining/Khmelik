@@ -19,6 +19,9 @@ public class Analyzer {
     @Parameter(names = "--help", help = true, description = "Prints the description of all available commands.")
     private boolean help;
 
+    @Parameter(names = {"-p", "--parallel"}, required = false, description = "Executes the task in parallel.")
+    private boolean parallel;
+
     public static void main(String[] args) {
         Analyzer analyzer = new Analyzer();
         JCommander cmd = new JCommander(analyzer);
@@ -27,7 +30,7 @@ public class Analyzer {
         try {
             cmd.parse(args);
             if (analyzer.help) cmd.usage();
-            analyzerResult = analyzer.task.getCommand().execute(analyzer.textFilePath);
+            analyzerResult = analyzer.task.getCommand().execute(analyzer.textFilePath, analyzer.parallel);
         } catch (ParameterException | IOException ex) {
             analyzerResult = (ex.toString() + EXCEPTION_MESSAGE);
         }

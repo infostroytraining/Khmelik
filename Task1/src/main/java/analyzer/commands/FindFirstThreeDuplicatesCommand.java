@@ -6,18 +6,21 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class FindFirstThreeDuplicatesCommand implements AnalyzerCommand {
 
     public static final String NO_DUPLICATES_MESSAGE = "No duplicates found.";
 
     @Override
-    public String execute(String filePath) throws IOException {
+    public String execute(String filePath, boolean parallel) throws IOException {
         StringBuilder result = new StringBuilder();
         Set<String> words = new HashSet<>();
         Set<String> duplicates = new TreeSet<>(new StringLengthComparator().reversed());
-        Files.lines(Paths.get(filePath))
-                .map(line -> line.toLowerCase().split(WORD_DIVIDER_REGEXP))
+        Stream<String> stream = Files.lines(Paths.get(filePath));
+        stream.map(line -> line.toLowerCase().split(WORD_DIVIDER_REGEXP))
                 .flatMap(Arrays::stream)
                 .filter(mapItem -> !mapItem.isEmpty())
                 .anyMatch(word -> isDuplicatedAdded(word, words, duplicates) && (duplicates.size() == 3));

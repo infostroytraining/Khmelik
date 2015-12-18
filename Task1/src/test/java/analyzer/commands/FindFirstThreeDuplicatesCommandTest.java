@@ -2,7 +2,6 @@ package analyzer.commands;
 
 import org.junit.Test;
 
-import java.io.IOError;
 import java.io.IOException;
 
 import static org.junit.Assert.*;
@@ -19,17 +18,17 @@ public class FindFirstThreeDuplicatesCommandTest {
 
     @Test
     public void testExecute() throws IOException {
-        assertEquals(TEST_FILE_DUPLICATES, command.execute(TEST_FILE_PATH));
+        assertEquals(TEST_FILE_DUPLICATES, command.execute(TEST_FILE_PATH, true));
     }
 
     @Test
     public void testExecuteOnEmptyFile() throws IOException {
         assertEquals(FindFirstThreeDuplicatesCommand.NO_DUPLICATES_MESSAGE,
-                command.execute(EMPTY_FILE_PATH));
+                command.execute(EMPTY_FILE_PATH, true));
     }
 
     @Test(expected = IOException.class)
     public void testExecuteOnNoFile() throws IOException {
-        command.execute(NO_FILE_PATH);
+        command.execute(NO_FILE_PATH, true);
     }
 }

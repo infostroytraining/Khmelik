@@ -7,16 +7,18 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class FindFirstThreeLongestCommand implements AnalyzerCommand {
 
     public static final String NO_WORDS_MESSAGE = "No words found.";
 
     @Override
-    public String execute(String filePath) throws IOException {
+    public String execute(String filePath, boolean parallel) throws IOException {
         StringBuilder result = new StringBuilder();
-        Files.lines(Paths.get(filePath))
-                .map(line -> line.toLowerCase().split(WORD_DIVIDER_REGEXP))
+        Stream<String> linesStream = Files.lines(Paths.get(filePath));
+        if (parallel) linesStream = linesStream.parallel();
+        linesStream.map(line -> line.toLowerCase().split(WORD_DIVIDER_REGEXP))
                 .flatMap(Arrays::stream)
                 .filter(mapItem -> !mapItem.isEmpty())
                 .collect(Collectors.toList())

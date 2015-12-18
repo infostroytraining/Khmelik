@@ -6,5 +6,5 @@ public interface AnalyzerCommand {
 
     public static final String WORD_DIVIDER_REGEXP = "[\\s,.!?\"\'“”’—\\(\\)…:‘0-9;/\\*]+";
 
-    public String execute(String filePath) throws IOException;
+    public String execute(String filePath, boolean parallel) throws IOException;
 }

@@ -9,15 +9,18 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class FindTwoMostFrequentWordsCommand implements AnalyzerCommand {
 
     public static final String NO_WORDS_MESSAGE = "No words found.";
 
     @Override
-    public String execute(String filePath) throws IOException {
+    public String execute(String filePath, boolean parallel) throws IOException {
         StringBuilder result = new StringBuilder();
-        Files.lines(Paths.get(filePath))
+        Stream<String> linesStream = Files.lines(Paths.get(filePath));
+        if(parallel) linesStream.parallel();
+        linesStream
                 .map(line -> line.toLowerCase().split(WORD_DIVIDER_REGEXP))
                 .flatMap(Arrays::stream)
                 .filter(mapItem -> !mapItem.isEmpty())

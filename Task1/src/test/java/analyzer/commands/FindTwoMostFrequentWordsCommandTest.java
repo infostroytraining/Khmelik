@@ -18,17 +18,17 @@ public class FindTwoMostFrequentWordsCommandTest {
 
     @Test
     public void testExecute() throws IOException {
-        assertEquals(TEST_FILE_MOST_FREQUENT_WORDS, command.execute(TEST_FILE_PATH));
+        assertEquals(TEST_FILE_MOST_FREQUENT_WORDS, command.execute(TEST_FILE_PATH, true));
     }
 
     @Test
     public void testExecuteOnEmptyFile() throws IOException {
         assertEquals(FindTwoMostFrequentWordsCommand.NO_WORDS_MESSAGE,
-                command.execute(EMPTY_FILE_PATH));
+                command.execute(EMPTY_FILE_PATH, true));
     }
 
     @Test(expected = IOException.class)
     public void testExecuteOnNoFile() throws IOException {
-        command.execute(NO_FILE_PATH);
+        command.execute(NO_FILE_PATH, true);
     }
 }
