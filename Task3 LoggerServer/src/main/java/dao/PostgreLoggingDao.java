@@ -16,9 +16,9 @@ public class PostgreLoggingDao implements LoggingDao {
 
     private static final Logger logger = LogManager.getLogger();
 
-    public static final String INSERT_LOG_QUERY =
+    private static final String INSERT_LOG_QUERY =
             "INSERT INTO log(name, message, type, date) VALUES (?, ?, ?, ?)";
-    public static final String SELECT_ALL_LOGS_QUERY = "SELECT * FROM log";
+    private static final String SELECT_ALL_LOGS_QUERY = "SELECT * FROM log";
 
     @Override
     public Log create(Log entity) throws DaoException {

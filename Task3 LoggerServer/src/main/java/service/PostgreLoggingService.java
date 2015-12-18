@@ -1,8 +1,6 @@
 package service;
 
 import dao.LoggingDao;
-import dao.exceptions.DaoException;
-import db.Transaction;
 import db.TransactionManager;
 import db.exceptions.TransactionException;
 import entity.Log;
@@ -22,7 +20,7 @@ public class PostgreLoggingService implements LoggingService {
     public PostgreLoggingService(LoggingDao loggingDao, TransactionManager transactionManager) {
         this.loggingDao = loggingDao;
         this.transactionManager = transactionManager;
-        logger.info("PostgreLoggingServiceInitialized");
+        logger.info("Postgre LoggingService Initialized");
     }
 
     @Override
@@ -34,6 +32,6 @@ public class PostgreLoggingService implements LoggingService {
     @Override
     public List<Log> getLogs() throws TransactionException {
         logger.entry();
-        return transactionManager.doTask(() -> loggingDao.getAll(), Connection.TRANSACTION_READ_UNCOMMITTED);
+        return transactionManager.doTask(loggingDao::getAll, Connection.TRANSACTION_READ_UNCOMMITTED);
     }
 }

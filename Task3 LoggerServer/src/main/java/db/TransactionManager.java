@@ -22,18 +22,40 @@ public class TransactionManager {
     }
 
     public <T> T doTask(Transaction<T> transaction, int transactionIsolation) throws TransactionException {
+        Connection connection = null;
         try {
-            Connection connection = usersDs.getConnection();
+            connection = usersDs.getConnection();
             connection.setTransactionIsolation(transactionIsolation);
             ConnectionHolder.setConnection(connection);
             T result = transaction.execute();
-            ConnectionHolder.getConnection().commit();
-            connection.close();
+            connection.commit();
             return result;
         } catch (SQLException | DaoException e) {
+            rollback(connection);
             logger.error("Transactional exception caused by {}.", e.getMessage());
             throw new TransactionException(e);
+        } finally {
+            close(connection);
         }
     }
 
+    private void close(Connection connection) {
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                logger.error("Error while closing SQL connection.", e);
+            }
+        }
+    }
+
+    private void rollback(Connection connection) {
+        if (connection != null) {
+            try {
+                connection.rollback();
+            } catch (SQLException e) {
+                logger.error("Error while trying to rollback SQL connection.", e);
+            }
+        }
+    }
 }

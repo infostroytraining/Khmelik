@@ -28,6 +28,7 @@ public class RegistrationServlet extends HttpServlet {
 
     private static final Logger logger = LogManager.getLogger();
     private static final String USER_DTO_ATTRIBUTE_NAME = "userDTO";
+    private static final String REGISTRATION_PAGE = "registration";
 
     private UserService userService;
     private GoogleReCaptchaValidationUtils googleReCaptchaValidationUtils;
@@ -79,21 +80,21 @@ public class RegistrationServlet extends HttpServlet {
             User user = new User(email, password, name, surname, imagePart.getSubmittedFileName());
             User registeredUser = userService.register(user);
             session.setAttribute("user", registeredUser);
-            if (registeredUser.getImage() != null)
-                saveImage(imagePart, registeredUser.getImage());
+            if (registeredUser.getImage() != null) saveImage(imagePart, registeredUser.getImage());
+
             logger.info("User {} has ben successfully registered", user.getEmail());
             resp.sendRedirect("welcome");
         } catch (CaptchaValidationException | DuplicateInsertException e) {
             session.setAttribute(USER_DTO_ATTRIBUTE_NAME, userDTO);
             session.setAttribute("captchaDuplicationException", e);
-            resp.sendRedirect("registration");
+            resp.sendRedirect(REGISTRATION_PAGE);
         } catch (ValidationException e) {
             session.setAttribute(USER_DTO_ATTRIBUTE_NAME, userDTO);
             session.setAttribute("validationException", e);
-            resp.sendRedirect("registration");
+            resp.sendRedirect(REGISTRATION_PAGE);
         } catch (TransactionException e) {
             session.setAttribute("transactionException", e);
-            resp.sendRedirect("registration");
+            resp.sendRedirect(REGISTRATION_PAGE);
         } catch (ServiceException e) {
             resp.sendError(500, "Service exception.");
         }

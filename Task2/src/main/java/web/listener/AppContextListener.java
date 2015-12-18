@@ -1,15 +1,8 @@
 package web.listener;
 
-import logging.ServerAppender;
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
-import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.LoggerContext;
 import service.UserService;
-import web.HttpSender;
 import web.captcha.GoogleReCaptchaValidationUtils;
 import web.listener.factory.ServiceFactory;
 

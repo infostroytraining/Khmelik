@@ -7,7 +7,6 @@ import org.apache.logging.log4j.Logger;
 import service.exceptions.DuplicateInsertException;
 import service.exceptions.ValidationException;
 
-import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -25,18 +24,40 @@ public class TransactionManager {
     }
 
     public <T> T doTask(Transaction<T> transaction, int transactionIsolation) throws TransactionException, DuplicateInsertException, ValidationException {
+        Connection connection = null;
         try {
-            Connection connection = usersDs.getConnection();
+            connection = usersDs.getConnection();
             connection.setTransactionIsolation(transactionIsolation);
             ConnectionHolder.setConnection(connection);
             T result = transaction.execute();
             connection.commit();
-            connection.close();
             return result;
         } catch (SQLException | DaoException e) {
+            rollback(connection);
             logger.error("Transactional exception caused by {}.", e.getMessage());
             throw new TransactionException(e);
+        } finally {
+            close(connection);
         }
     }
 
+    private void close(Connection connection) {
+        if(connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                logger.error("Error while closing SQL connection.", e);
+            }
+        }
+    }
+
+    private void rollback(Connection connection) {
+        if(connection != null) {
+            try {
+                connection.rollback();
+            } catch (SQLException e) {
+                logger.error("Error while trying to rollback SQL connection.", e);
+            }
+        }
+    }
 }

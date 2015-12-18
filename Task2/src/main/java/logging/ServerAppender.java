@@ -13,11 +13,10 @@ import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 import web.HttpSender;
 
+import java.io.IOException;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -47,8 +46,8 @@ public final class ServerAppender extends AbstractAppender {
         parameters.add(new BasicNameValuePair("type", event.getLevel().name()));
         try {
             HttpSender.sendAsyncPostRequest(loggerServerURL, parameters);
-        } catch (UnsupportedEncodingException | ExecutionException | InterruptedException e) {
-            LOGGER.error("Error during execution of http request.", e);
+        } catch (IOException e) {
+            LOGGER.debug("IOException in HttpSender.", e);
         } finally {
             readLock.unlock();
         }
