@@ -1,7 +1,5 @@
 package analyzer.commands;
 
-import analyzer.comparators.StringLengthComparator;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -24,7 +22,7 @@ public class FindFirstThreeLongestCommand implements AnalyzerCommand {
                 .collect(Collectors.toList())
                 .stream()
                 .distinct()
-                .sorted(new StringLengthComparator().reversed())
+                .sorted((s1, s2) -> s2.length() - s1.length())
                 .limit(3)
                 .forEach(word -> result.append(word).append(" -> ").append(word.length()).append('\n'));
         return (result.length() != 0) ? result.toString() : NO_WORDS_MESSAGE;

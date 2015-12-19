@@ -1,8 +1,5 @@
 package analyzer.commands;
 
-import analyzer.comparators.WordAlphabeticalComparator;
-import analyzer.comparators.WordFrequencyComparator;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -27,9 +24,9 @@ public class FindTwoMostFrequentWordsCommand implements AnalyzerCommand {
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
                 .entrySet()
                 .stream()
-                .sorted(new WordFrequencyComparator().reversed())
+                .sorted((word1, word2) -> (int) (word2.getValue() - word1.getValue()))
                 .limit(2)
-                .sorted(new WordAlphabeticalComparator().reversed())
+                .sorted((word1, word2) -> - word1.getKey().compareTo(word2.getKey()))
                 .forEach(wordFrequencyPair -> appendWordToBuilder(wordFrequencyPair, result));
         return (result.length() != 0) ? result.deleteCharAt(result.length() - 1).toString() : NO_WORDS_MESSAGE;
     }

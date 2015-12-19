@@ -1,13 +1,10 @@
 package analyzer.commands;
 
-import analyzer.comparators.StringLengthComparator;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FindFirstThreeDuplicatesCommand implements AnalyzerCommand {
@@ -18,7 +15,7 @@ public class FindFirstThreeDuplicatesCommand implements AnalyzerCommand {
     public String execute(String filePath, boolean parallel) throws IOException {
         StringBuilder result = new StringBuilder();
         Set<String> words = new HashSet<>();
-        Set<String> duplicates = new TreeSet<>(new StringLengthComparator().reversed());
+        Set<String> duplicates = new TreeSet<>((s1, s2) -> s2.length()-s1.length());
         Stream<String> stream = Files.lines(Paths.get(filePath));
         stream.map(line -> line.toLowerCase().split(WORD_DIVIDER_REGEXP))
                 .flatMap(Arrays::stream)
