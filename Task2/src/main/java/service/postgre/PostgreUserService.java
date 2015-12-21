@@ -6,6 +6,7 @@ import db.exceptions.TransactionException;
 import entity.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.util.Strings;
 import service.UserService;
 import service.exceptions.DuplicateInsertException;
 import service.exceptions.ValidationException;
@@ -36,7 +37,7 @@ public class PostgreUserService implements UserService {
             logger.entry(user);
             userValidator.validate(user);
             String imageFileName = user.getName() + user.getSurname() + ".jpg";
-            user.setImage((user.getImage() == null || user.getImage().isEmpty()) ? null : imageFileName);
+            user.setImage(Strings.isEmpty(user.getImage()) ? null : imageFileName);
             logger.debug("User image set to '{}'.", user.getImage());
             if (!userDao.isAlreadyCreated(user)) {
                 User result =  userDao.create(user);

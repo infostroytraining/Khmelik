@@ -3,6 +3,7 @@ package service.validators;
 import entity.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.util.Strings;
 import service.exceptions.FieldError;
 import service.exceptions.ValidationException;
 
@@ -21,23 +22,23 @@ public class UserValidator implements Validator<User> {
             logger.error("Registration/inserting user is null.");
             throw new IllegalArgumentException("Registration/inserting user is null.");
         }
-        if (user.getEmail() == null
+        if (Strings.isEmpty(user.getEmail())
                 || !user.getEmail().matches(UserField.EMAIL.getPattern())) {
             errors.add(new FieldError(UserField.EMAIL));
         }
-        if (user.getName() == null ||
+        if (Strings.isEmpty(user.getName()) ||
                 !user.getName().matches(UserField.NAME.getPattern())) {
             errors.add(new FieldError(UserField.NAME));
         }
-        if (user.getSurname() == null
+        if (Strings.isEmpty(user.getSurname())
                 || !user.getSurname().matches(UserField.SURNAME.getPattern())) {
             errors.add(new FieldError(UserField.SURNAME));
         }
-        if (user.getPassword() == null
+        if (Strings.isEmpty(user.getPassword())
                 || !user.getPassword().matches(UserField.PASSWORD.getPattern())) {
             errors.add(new FieldError(UserField.PASSWORD));
         }
-        if (!(user.getImage() == null || user.getImage().isEmpty())
+        if (!Strings.isEmpty(user.getImage())
                 && !user.getImage().matches(UserField.IMAGE.getPattern())) {
             errors.add(new FieldError(UserField.IMAGE));
         }
