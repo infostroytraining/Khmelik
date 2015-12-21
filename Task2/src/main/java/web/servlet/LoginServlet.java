@@ -59,7 +59,7 @@ public class LoginServlet extends HttpServlet{
             }
         } catch (TransactionException | DuplicateInsertException | ValidationException e) {
             logger.error("Transactional | Duplicate | Validation exception in login servlet.", e);
-            resp.sendError(500);
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 }

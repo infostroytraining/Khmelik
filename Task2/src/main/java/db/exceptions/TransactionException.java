@@ -1,6 +1,6 @@
 package db.exceptions;
 
-public class TransactionException extends Throwable {
+public class TransactionException extends Exception {
 
     public TransactionException(Throwable e) {
         super(e);
