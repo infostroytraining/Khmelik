@@ -56,7 +56,8 @@ public class RegistrationServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (!isMultipartFormat(req)) {
-            resp.sendError(400);
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
         }
         req.setCharacterEncoding("UTF-8");
 

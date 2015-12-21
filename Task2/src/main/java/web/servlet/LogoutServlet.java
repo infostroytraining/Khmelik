@@ -19,10 +19,8 @@ public class LogoutServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession(false);
-        LOGGER.debug("User " + ((User) session.getAttribute("user")).getEmail() + "has just logged out.");
-        if (session != null) {
-            session.invalidate();
-        }
+        LOGGER.debug("User '{}' has just logged out.", ((User) session.getAttribute("user")).getEmail());
+        session.invalidate();
         resp.sendRedirect("login");
     }
 }

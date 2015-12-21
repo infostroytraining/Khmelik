@@ -54,7 +54,7 @@ public class LoginServletTest {
     private RequestDispatcher requestDispatcher;
     @Mock
     private UserService userService;
-    @Mock
+
     private User testUser;
 
     @Before
@@ -66,9 +66,11 @@ public class LoginServletTest {
         when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
         when(request.getSession()).thenReturn(session);
 
+        testUser = new User();
+        testUser.setEmail(TEST_EMAIL);
+        testUser.setPassword(TEST_PASSWORD);
+
         when(userService.loadUserByUsername(TEST_EMAIL)).thenReturn(testUser);
-        when(testUser.getEmail()).thenReturn(TEST_EMAIL);
-        when(testUser.getPassword()).thenReturn(TEST_PASSWORD);
         when(userService.loadUserByUsername(WRONG_EMAIL)).thenReturn(null);
     }
 
