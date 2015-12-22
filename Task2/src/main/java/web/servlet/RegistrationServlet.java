@@ -6,6 +6,7 @@ import entity.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import service.exceptions.ServiceException;
+import web.utils.ImageSavingUtils;
 import web.exceptions.CaptchaValidationException;
 import service.exceptions.FieldError;
 import service.exceptions.ValidationException;
@@ -13,14 +14,12 @@ import service.exceptions.DuplicateInsertException;
 import nl.captcha.Captcha;
 import service.UserService;
 import service.validators.UserField;
-import web.captcha.GoogleReCaptchaValidationUtils;
+import web.utils.GoogleReCaptchaValidationUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
 import javax.servlet.http.*;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,7 +80,8 @@ public class RegistrationServlet extends HttpServlet {
             User user = new User(email, password, name, surname, imagePart.getSubmittedFileName());
             User registeredUser = userService.register(user);
             session.setAttribute("user", registeredUser);
-            if (registeredUser.getImage() != null) saveImage(imagePart, registeredUser.getImage());
+            if (registeredUser.getImage() != null)
+                ImageSavingUtils.saveImage(imagePart, imagesFolderRelativePath, registeredUser.getImage());
 
             logger.info("User {} has ben successfully registered", user.getEmail());
             resp.sendRedirect("welcome");
@@ -97,7 +97,7 @@ public class RegistrationServlet extends HttpServlet {
             session.setAttribute("transactionException", e);
             resp.sendRedirect(REGISTRATION_PAGE);
         } catch (ServiceException e) {
-            resp.sendError(500, "Service exception.");
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Service exception.");
         }
     }
 
@@ -124,23 +124,6 @@ public class RegistrationServlet extends HttpServlet {
         Captcha captcha = (Captcha) session.getAttribute(Captcha.NAME);
         if (!captcha.isCorrect(simpleCaptchaAnswer)) {
             throw new CaptchaValidationException("SimpleCaptcha");
-        }
-    }
-
-    private void saveImage(Part imagePart, String filePath) {
-        try (InputStream imageInputStream = imagePart.getInputStream()) {
-            File imageFile = new File(imagesFolderRelativePath + filePath);
-            if (!imageFile.exists()) {
-                if (imageFile.getParentFile().mkdirs()) logger.debug("Image storage directory created.");
-                if (imageFile.createNewFile()) logger.debug("Image file created on path " + filePath);
-            }
-            Files.copy(imageInputStream, imageFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            Thread.sleep(500);  //Time for image to copy (otherwise it won't be displayed when redirecting).
-        } catch (IOException e) {
-            logger.error("Can not create/write into image file. Image saving exception."
-                    + e.getLocalizedMessage());
-        } catch (InterruptedException e) {
-            logger.error("Interrupted exception on waiting until file will load on server.");
         }
     }
 }

@@ -11,7 +11,7 @@ import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginElement;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.layout.PatternLayout;
-import web.HttpSender;
+import web.utils.HttpSender;
 
 import java.io.IOException;
 import java.io.Serializable;

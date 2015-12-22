@@ -1,4 +1,4 @@
 package service.exceptions;
 
-public class ServiceException extends Throwable {
+public class ServiceException extends Exception {
 }

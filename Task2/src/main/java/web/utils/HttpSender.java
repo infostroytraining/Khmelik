@@ -1,4 +1,4 @@
-package web;
+package web.utils;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;

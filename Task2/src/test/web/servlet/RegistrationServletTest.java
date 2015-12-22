@@ -1,9 +1,12 @@
 package web.servlet;
 
+
 import db.exceptions.TransactionException;
 import dto.UserDTO;
 import entity.User;
 import nl.captcha.Captcha;
+import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.util.Strings;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -18,7 +21,7 @@ import service.UserService;
 import service.exceptions.DuplicateInsertException;
 import service.exceptions.ServiceException;
 import service.exceptions.ValidationException;
-import web.captcha.GoogleReCaptchaValidationUtils;
+import web.utils.GoogleReCaptchaValidationUtils;
 import web.exceptions.CaptchaValidationException;
 
 import javax.servlet.*;
@@ -27,6 +30,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 
 import static org.mockito.Mockito.*;
@@ -37,14 +42,27 @@ import static org.junit.Assert.*;
 public class RegistrationServletTest {
 
     private static final String USER_SERVICE_CONTEXT_ATTRIBUTE = "userService";
+
     private static final String GOOGLE_RECAPTCHA_UTILS_ATTRIBUTE_NAME = "googleReCaptchaValidationUtils";
     private static final String GOOD_CAPTCHA = "good captcha";
     private static final String WRONG_CAPTCHA = "wrong captcha";
+
     private static final String REGISTRATION_PAGE_URL = "registration";
-    public static final String TEXT_PLAIN_CONTENT_TYPE = "text/plain";
-    public static final String MULTIPART_CONTENT_TYPE = "multipart/form-data";
-    public static final String CAPTCHA_DUPLICATION_EXCEPTION_ATTRIBUTE_NAME = "captchaDuplicationException";
-    public static final String USER_DTO_ATTRIBUTE_NAME = "userDTO";
+    private static final String WELCOME_PAGE_URL = "welcome";
+
+    private static final String TEXT_PLAIN_CONTENT_TYPE = "text/plain";
+    private static final String MULTIPART_CONTENT_TYPE = "multipart/form-data";
+
+    private static final String USER_ATTRIBUTE_NAME = "user";
+    private static final String USER_DTO_ATTRIBUTE_NAME = "userDTO";
+    private static final String CAPTCHA_DUPLICATION_EXCEPTION_ATTRIBUTE_NAME = "captchaDuplicationException";
+    private static final String VALIDATION_EXCEPTION_ATTRIBUTE_NAME = "validationException";
+    private static final String TRANSACTION_EXCEPTION_ATTRIBUTE_NAME = "transactionException";
+    private static final String SERVICE_EXCEPTION_MESSAGE = "Service exception.";
+    private static final String IMAGES_FOLDER_CONTEXT_ATTRIBUTE_NAME = "imagesFolderRelativePath";
+
+    private static final String LOCAL_IMAGES_FOLDER_RELATIVE_PATH = "../webapps/test/images/";
+    private static final String TEST_DATA_DIRECTORY = "../webapps/test";
 
     private RegistrationServlet servlet = new RegistrationServlet();
 
@@ -74,20 +92,24 @@ public class RegistrationServletTest {
 
     @BeforeClass
     public static void beforeClassInit() {
-        testUser = new User("goodsiremail@gmail.com",
+        testUser = new User(
+                "goodsiremail@gmail.com",
                 "goodpassword",
                 "goodname",
                 "goodsurname",
                 "test_image_file_name.jpg");
-        testUserDTO = new UserDTO("goodsiremail@gmail.com", "goodname",
+        testUserDTO = new UserDTO(
+                "goodsiremail@gmail.com",
+                "goodname",
                 "goodsurname");
     }
 
     @Before
-    public void setUp() throws Exception, ServiceException {
+    public void setUp() throws Exception {
         when(servletConfig.getServletContext()).thenReturn(servletContext);
         when(servletContext.getAttribute(USER_SERVICE_CONTEXT_ATTRIBUTE)).thenReturn(userService);
         when(servletContext.getAttribute(GOOGLE_RECAPTCHA_UTILS_ATTRIBUTE_NAME)).thenReturn(googleReCaptchaValidationUtils);
+        when(servletContext.getAttribute(IMAGES_FOLDER_CONTEXT_ATTRIBUTE_NAME)).thenReturn(LOCAL_IMAGES_FOLDER_RELATIVE_PATH);
 
         when(request.getServletContext()).thenReturn(servletContext);
         when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
@@ -104,7 +126,7 @@ public class RegistrationServletTest {
 
         when(userService.register(testUser)).thenReturn(testUser);
         when(part.getSubmittedFileName()).thenReturn("test_image_file_name.jpg");
-        when(part.getInputStream()).thenReturn(null);
+        when(part.getInputStream()).thenReturn(new ByteArrayInputStream("hello".getBytes()));
     }
 
     @Test
@@ -133,7 +155,9 @@ public class RegistrationServletTest {
 
     @Test
     public void testDoPostOnCorrectData() throws Exception {
-        //TODO correct insertion (deal with photo somehow)
+        setCorrectInput();
+        verify(session).setAttribute(USER_ATTRIBUTE_NAME, testUser);
+        verify(response).sendRedirect(WELCOME_PAGE_URL);
     }
 
     @Test
@@ -145,20 +169,22 @@ public class RegistrationServletTest {
     }
 
     @Test
-    public void testDoPostOnDuplicateInsert() throws Exception, ServiceException {
-        when(userService.register(testUser)).thenThrow(DuplicateInsertException.class);
-        setUserInputIntoRequest(testUser, testUser.getPassword(), GOOD_CAPTCHA, GOOD_CAPTCHA);
+    public void testDoPostOnFailPasswordConfirmation() throws Exception {
+        when(request.getParameter("password")).thenReturn(testUser.getPassword());
+        when(request.getParameter("confirmedPassword")).thenReturn(Strings.EMPTY);
         servlet.init(servletConfig);
         servlet.doPost(request, response);
 
-        ArgumentCaptor<UserDTO> userDTOCaptor = ArgumentCaptor.forClass(UserDTO.class);
-        verify(session).setAttribute(eq(USER_DTO_ATTRIBUTE_NAME), userDTOCaptor.capture());
-        assertEquals(userDTOCaptor.getValue(), testUserDTO);
+        verifyException(VALIDATION_EXCEPTION_ATTRIBUTE_NAME, ValidationException.class);
+        verify(response).sendRedirect(REGISTRATION_PAGE_URL);
+    }
 
-        ArgumentCaptor<Throwable> exceptionCaptor = ArgumentCaptor.forClass(Throwable.class);
-        verify(session).setAttribute(eq(CAPTCHA_DUPLICATION_EXCEPTION_ATTRIBUTE_NAME),
-                exceptionCaptor.capture());
-        assertTrue(exceptionCaptor.getValue() instanceof DuplicateInsertException);
+    @Test
+    public void testDoPostOnDuplicateInsert() throws Exception {
+        when(userService.register(testUser)).thenThrow(DuplicateInsertException.class);
+        setCorrectInput();
+        verifyUserDTOEquality();
+        verifyException(CAPTCHA_DUPLICATION_EXCEPTION_ATTRIBUTE_NAME ,DuplicateInsertException.class);
         verify(response).sendRedirect(REGISTRATION_PAGE_URL);
     }
 
@@ -167,10 +193,7 @@ public class RegistrationServletTest {
         setUserInputIntoRequest(testUser, testUser.getPassword(), GOOD_CAPTCHA, WRONG_CAPTCHA);
         servlet.init(servletConfig);
         servlet.doPost(request, response);
-        ArgumentCaptor<Throwable> exceptionCaptor = ArgumentCaptor.forClass(Throwable.class);
-        verify(session).setAttribute(eq(CAPTCHA_DUPLICATION_EXCEPTION_ATTRIBUTE_NAME),
-                exceptionCaptor.capture());
-        assertTrue(exceptionCaptor.getValue() instanceof CaptchaValidationException);
+        verifyException(CAPTCHA_DUPLICATION_EXCEPTION_ATTRIBUTE_NAME, CaptchaValidationException.class);
         verify(response).sendRedirect(REGISTRATION_PAGE_URL);
     }
 
@@ -179,38 +202,42 @@ public class RegistrationServletTest {
         setUserInputIntoRequest(testUser, testUser.getPassword(), WRONG_CAPTCHA, GOOD_CAPTCHA);
         servlet.init(servletConfig);
         servlet.doPost(request, response);
-        ArgumentCaptor<Throwable> exceptionCaptor = ArgumentCaptor.forClass(Throwable.class);
-        verify(session).setAttribute(eq(CAPTCHA_DUPLICATION_EXCEPTION_ATTRIBUTE_NAME),
-                exceptionCaptor.capture());
-        assertTrue(exceptionCaptor.getValue() instanceof CaptchaValidationException);
+        verifyException(CAPTCHA_DUPLICATION_EXCEPTION_ATTRIBUTE_NAME, CaptchaValidationException.class);
         verify(response).sendRedirect(REGISTRATION_PAGE_URL);
     }
 
     @Test
-    public void testDoPostOnBadValidationCredentials() throws Exception, ServiceException {
+    public void testDoPostOnBadValidationCredentials() throws Exception {
         when(userService.register(testUser)).thenThrow(ValidationException.class);
         setCorrectInput();
-        //TODO check redirects and data
+        verifyUserDTOEquality();
+        verifyException(VALIDATION_EXCEPTION_ATTRIBUTE_NAME ,ValidationException.class);
+        verify(response).sendRedirect(REGISTRATION_PAGE_URL);
     }
 
     @Test
-    public void testDoPostOnTransactionalExceptionThrow() throws Exception, ServiceException {
+    public void testDoPostOnTransactionalExceptionThrow() throws Exception {
         when(userService.register(testUser)).thenThrow(TransactionException.class);
         setCorrectInput();
-        //TODO check redirects and data
+        verifyException(TRANSACTION_EXCEPTION_ATTRIBUTE_NAME, TransactionException.class);
+        verify(response).sendRedirect(REGISTRATION_PAGE_URL);
     }
 
     @Test
-    public void testDoPostOnServiceExceptionThrow() throws Exception, ServiceException {
-        when(userService.register(testUser)).thenThrow(TransactionException.class);
+    public void testDoPostOnServiceExceptionThrow() throws Exception {
+        when(userService.register(testUser)).thenThrow(ServiceException.class);
         setCorrectInput();
-        //TODO check redirects and data
+        verify(response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, SERVICE_EXCEPTION_MESSAGE);
     }
 
 
     @AfterClass
-    public static void afterClassDestroy(){
-        //TODO remove all created photos with folder and set null user objects.
+    public static void afterClassDestroy() throws IOException {
+        testUser = null;
+        testUserDTO = null;
+
+        File logsDirectory = new File(TEST_DATA_DIRECTORY);
+        FileUtils.deleteDirectory(logsDirectory);
     }
 
 
@@ -230,5 +257,17 @@ public class RegistrationServletTest {
         setUserInputIntoRequest(testUser, testUser.getPassword(), GOOD_CAPTCHA, GOOD_CAPTCHA);
         servlet.init(servletConfig);
         servlet.doPost(request, response);
+    }
+
+    private void verifyUserDTOEquality() {
+        ArgumentCaptor<UserDTO> userDTOCaptor = ArgumentCaptor.forClass(UserDTO.class);
+        verify(session).setAttribute(eq(USER_DTO_ATTRIBUTE_NAME), userDTOCaptor.capture());
+        assertEquals(userDTOCaptor.getValue(), testUserDTO);
+    }
+
+    private void verifyException(String attributeName, Class exceptionClass) {
+        ArgumentCaptor<Throwable> exceptionCaptor = ArgumentCaptor.forClass(Throwable.class);
+        verify(session).setAttribute(eq(attributeName), exceptionCaptor.capture());
+        assertEquals(exceptionCaptor.getValue().getClass(), exceptionClass);
     }
 }
