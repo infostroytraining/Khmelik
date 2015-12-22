@@ -6,6 +6,8 @@ import dto.UserDTO;
 import entity.User;
 import nl.captcha.Captcha;
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
 import org.junit.AfterClass;
 import org.junit.Before;
