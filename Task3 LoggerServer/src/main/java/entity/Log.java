@@ -60,6 +60,32 @@ public class Log {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Log log = (Log) o;
+
+        if (idLog != log.idLog) return false;
+        if (dateTime != null ? !dateTime.equals(log.dateTime) : log.dateTime != null) return false;
+        if (message != null ? !message.equals(log.message) : log.message != null) return false;
+        if (name != null ? !name.equals(log.name) : log.name != null) return false;
+        if (type != log.type) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = idLog;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (message != null ? message.hashCode() : 0);
+        result = 31 * result + (dateTime != null ? dateTime.hashCode() : 0);
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "Log{" +
                 "idLog=" + idLog +

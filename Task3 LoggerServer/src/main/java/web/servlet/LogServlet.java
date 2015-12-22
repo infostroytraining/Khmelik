@@ -54,7 +54,7 @@ public class LogServlet extends HttpServlet {
             }
         } catch (TransactionException e) {
             logger.error("Getting logs results into transaction exception.", e);
-            resp.sendError(500);
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 

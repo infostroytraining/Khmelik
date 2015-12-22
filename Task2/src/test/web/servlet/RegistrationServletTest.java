@@ -156,6 +156,7 @@ public class RegistrationServletTest {
     @Test
     public void testDoPostOnCorrectData() throws Exception {
         setCorrectInput();
+        verify(userService).register(testUser);
         verify(session).setAttribute(USER_ATTRIBUTE_NAME, testUser);
         verify(response).sendRedirect(WELCOME_PAGE_URL);
     }
@@ -184,6 +185,7 @@ public class RegistrationServletTest {
         when(userService.register(testUser)).thenThrow(DuplicateInsertException.class);
         setCorrectInput();
         verifyUserDTOEquality();
+        verify(userService).register(testUser);
         verifyException(CAPTCHA_DUPLICATION_EXCEPTION_ATTRIBUTE_NAME ,DuplicateInsertException.class);
         verify(response).sendRedirect(REGISTRATION_PAGE_URL);
     }
@@ -211,6 +213,7 @@ public class RegistrationServletTest {
         when(userService.register(testUser)).thenThrow(ValidationException.class);
         setCorrectInput();
         verifyUserDTOEquality();
+        verify(userService).register(testUser);
         verifyException(VALIDATION_EXCEPTION_ATTRIBUTE_NAME ,ValidationException.class);
         verify(response).sendRedirect(REGISTRATION_PAGE_URL);
     }
@@ -219,6 +222,7 @@ public class RegistrationServletTest {
     public void testDoPostOnTransactionalExceptionThrow() throws Exception {
         when(userService.register(testUser)).thenThrow(TransactionException.class);
         setCorrectInput();
+        verify(userService).register(testUser);
         verifyException(TRANSACTION_EXCEPTION_ATTRIBUTE_NAME, TransactionException.class);
         verify(response).sendRedirect(REGISTRATION_PAGE_URL);
     }
@@ -227,6 +231,7 @@ public class RegistrationServletTest {
     public void testDoPostOnServiceExceptionThrow() throws Exception {
         when(userService.register(testUser)).thenThrow(ServiceException.class);
         setCorrectInput();
+        verify(userService).register(testUser);
         verify(response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, SERVICE_EXCEPTION_MESSAGE);
     }
 
