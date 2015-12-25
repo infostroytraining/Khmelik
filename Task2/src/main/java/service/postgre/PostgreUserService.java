@@ -9,11 +9,15 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
 import service.UserService;
 import service.exceptions.DuplicateInsertException;
+import service.exceptions.FieldError;
 import service.exceptions.ValidationException;
+import service.validators.UserField;
 import service.validators.UserValidator;
 import service.validators.Validator;
 
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PostgreUserService implements UserService {
 
@@ -32,10 +36,10 @@ public class PostgreUserService implements UserService {
     }
 
     @Override
-    public User register(User user) throws ValidationException, DuplicateInsertException, TransactionException {
+    public User register(User user) throws ValidationException, TransactionException {
         return transactionManager.doTask(() -> {
             logger.entry(user);
-            //userValidator.validate(user);                   replaced by client-side validation
+            userValidator.validate(user);
             String imageFileName = user.getName() + user.getSurname() + ".jpg";
             user.setImage(Strings.isEmpty(user.getImage()) ? null : imageFileName);
             logger.debug("User image set to '{}'.", user.getImage());
@@ -45,16 +49,18 @@ public class PostgreUserService implements UserService {
                 return result;
             } else {
                 logger.warn("User duplicated insert.");
-                throw new DuplicateInsertException();
+                List<FieldError> errors = new ArrayList<>();
+                errors.add(new DuplicateInsertException());
+                throw new ValidationException(errors);
             }
         }, Connection.TRANSACTION_READ_COMMITTED);
     }
 
     @Override
     public User loadUserByUsername(String username) throws TransactionException,
-            DuplicateInsertException, ValidationException {
+            ValidationException {
         logger.entry(username);
-        return transactionManager.doTask(() ->
-                userDao.getUserByUsername(username), Connection.TRANSACTION_READ_COMMITTED);
+            return transactionManager.doTask(() ->
+                    userDao.getUserByUsername(username), Connection.TRANSACTION_READ_COMMITTED);
     }
 }

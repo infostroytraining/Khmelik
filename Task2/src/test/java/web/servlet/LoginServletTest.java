@@ -1,5 +1,6 @@
 package web.servlet;
 
+import com.google.gson.Gson;
 import db.exceptions.TransactionException;
 import entity.User;
 import org.apache.logging.log4j.util.Strings;
@@ -9,7 +10,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import service.UserService;
-import service.exceptions.DuplicateInsertException;
 import service.exceptions.ValidationException;
 
 import javax.servlet.RequestDispatcher;
@@ -20,23 +20,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import java.io.PrintWriter;
+
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LoginServletTest {
 
     private static final String USER_SERVICE_CONTEXT_ATTRIBUTE = "userService";
-    private static final String WELCOME_PAGE_URL = "welcome";
-    private static final String LOGIN_PAGE_URL = "login";
     private static final String EMAIL_ATTRIBUTE_NAME = "email";
     private static final String PASSWORD_ATTRIBUTE_NAME = "password";
     private static final String TEST_EMAIL = "test_email@gmail.com";
     private static final String TEST_PASSWORD = "test_password";
     private static final String WRONG_EMAIL = "wrong_email@gmail.com";
-    private static final String LOGIN_ERROR_ATTRIBUTE_NAME = "loginError";
-    private static final String LOGIN_DTO_ATTRIBUTE_NAME = "loginDTO";
-    private static final String LOGIN_ERROR_MESSAGE = "Wrong credentials. Please try again.";
     private static final String USER_ATTRIBUTE = "user";
+    private static final Gson GSON = new Gson();
 
     private LoginServlet servlet = new LoginServlet();
 
@@ -54,6 +52,8 @@ public class LoginServletTest {
     private RequestDispatcher requestDispatcher;
     @Mock
     private UserService userService;
+    @Mock
+    private PrintWriter responseWriter;
 
     private User testUser;
 
@@ -65,6 +65,7 @@ public class LoginServletTest {
         when(request.getServletContext()).thenReturn(servletContext);
         when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
         when(request.getSession()).thenReturn(session);
+        when(response.getWriter()).thenReturn(responseWriter);
 
         testUser = new User();
         testUser.setEmail(TEST_EMAIL);
@@ -98,7 +99,7 @@ public class LoginServletTest {
         servlet.doPost(request, response);
 
         verify(session).setAttribute(USER_ATTRIBUTE, testUser);
-        verify(response).sendRedirect(WELCOME_PAGE_URL);
+        verifyJsonAnswer(HttpServletResponse.SC_OK, testUser);
     }
 
     @Test
@@ -106,23 +107,14 @@ public class LoginServletTest {
         servlet.init(servletConfig);
         mockGetRequestParams(WRONG_EMAIL, Strings.EMPTY);
         servlet.doPost(request, response);
-        verify(session).setAttribute(LOGIN_ERROR_ATTRIBUTE_NAME, LOGIN_ERROR_MESSAGE);
-        verify(session).setAttribute(LOGIN_DTO_ATTRIBUTE_NAME, WRONG_EMAIL);
-        verify(response).sendRedirect(LOGIN_PAGE_URL);
+        String loginError = "Wrong credentials. Please try again.";
+        verifyJsonAnswer(HttpServletResponse.SC_BAD_REQUEST, loginError);
     }
 
     @Test
     public void testDoPostTransactionException() throws Exception {
         servlet.init(servletConfig);
         when(userService.loadUserByUsername(anyString())).thenThrow(TransactionException.class);
-        servlet.doPost(request, response);
-        verify(response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-    }
-
-    @Test
-    public void testDoPostDuplicateInsertException() throws Exception {
-        servlet.init(servletConfig);
-        when(userService.loadUserByUsername(anyString())).thenThrow(DuplicateInsertException.class);
         servlet.doPost(request, response);
         verify(response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
@@ -138,5 +130,11 @@ public class LoginServletTest {
     private void mockGetRequestParams(String email, String password) {
         when(request.getParameter(EMAIL_ATTRIBUTE_NAME)).thenReturn(email);
         when(request.getParameter(PASSWORD_ATTRIBUTE_NAME)).thenReturn(password);
+    }
+
+    private void verifyJsonAnswer(int httpResponseCode, Object toJsonObject) {
+        verify(response).setStatus(httpResponseCode);
+        verify(response).setHeader("Content-Type", "application/json");
+        verify(responseWriter).write(GSON.toJson(toJsonObject));
     }
 }

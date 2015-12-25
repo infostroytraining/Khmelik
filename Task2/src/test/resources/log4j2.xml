@@ -9,7 +9,7 @@
     </Appenders>
 
     <Loggers>
-        <Root level="NO">
+        <Root level="OFF">
         </Root>
     </Loggers>
 

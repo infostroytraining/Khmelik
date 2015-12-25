@@ -1,4 +1,4 @@
-package dao.mock_impl;
+package dao.in_memory;
 
 import dao.UserDao;
 import entity.User;
@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
-public class UserDaoMock implements UserDao {
+public class InMemoryUserDao implements UserDao {
 
     private static final Logger logger = LogManager.getLogger();
 

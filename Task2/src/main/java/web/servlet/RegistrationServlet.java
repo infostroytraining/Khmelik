@@ -1,7 +1,7 @@
 package web.servlet;
 
+import com.google.gson.Gson;
 import db.exceptions.TransactionException;
-import dto.UserDTO;
 import entity.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,7 +10,6 @@ import utils.ImageSavingUtils;
 import web.exceptions.CaptchaValidationException;
 import service.exceptions.FieldError;
 import service.exceptions.ValidationException;
-import service.exceptions.DuplicateInsertException;
 import nl.captcha.Captcha;
 import service.UserService;
 import service.validators.UserField;
@@ -26,8 +25,7 @@ import java.util.List;
 public class RegistrationServlet extends HttpServlet {
 
     private static final Logger logger = LogManager.getLogger();
-    private static final String USER_DTO_ATTRIBUTE_NAME = "userDTO";
-    private static final String REGISTRATION_PAGE = "registration";
+    private static final Gson GSON = new Gson();
 
     private UserService userService;
     private GoogleReCaptchaValidationUtils googleReCaptchaValidationUtils;
@@ -69,7 +67,6 @@ public class RegistrationServlet extends HttpServlet {
         String gRecaptchaResponse = req.getParameter("g-recaptcha-response");
         String simpleCaptchaAnswer = req.getParameter("simpleCaptchaAnswer");
 
-        UserDTO userDTO = new UserDTO(email, name, surname);
         HttpSession session = req.getSession();
 
         try {
@@ -79,30 +76,16 @@ public class RegistrationServlet extends HttpServlet {
 
             User user = new User(email, password, name, surname, imagePart.getSubmittedFileName());
             User registeredUser = userService.register(user);
-            session.setAttribute("user", registeredUser);
             if (registeredUser.getImage() != null)
                 ImageSavingUtils.saveImage(imagePart, imagesFolderRelativePath, registeredUser.getImage());
 
+            session.setAttribute("user", registeredUser);
             logger.info("User {} has ben successfully registered", user.getEmail());
-
-            //TODO replace with ajax
-            //resp.sendRedirect("welcome");
-
-        } catch (CaptchaValidationException | DuplicateInsertException e) {
-            session.setAttribute(USER_DTO_ATTRIBUTE_NAME, userDTO);
-            session.setAttribute("captchaDuplicationException", e);
-
-            //TODO replace with ajax
-            //resp.sendRedirect(REGISTRATION_PAGE);
-        } catch (ValidationException e) {
-            session.setAttribute(USER_DTO_ATTRIBUTE_NAME, userDTO);
-            session.setAttribute("validationException", e);
-            //TODO replace with ajax
-            //resp.sendRedirect(REGISTRATION_PAGE);
+            sendAjaxJsonAnswer(resp, HttpServletResponse.SC_OK, user);
+        } catch (CaptchaValidationException | ValidationException e) {
+            sendAjaxJsonAnswer(resp, HttpServletResponse.SC_BAD_REQUEST, e);
         } catch (TransactionException e) {
-            session.setAttribute("transactionException", e);
-            //TODO replace with ajax
-            //resp.sendRedirect(REGISTRATION_PAGE);
+            sendAjaxJsonAnswer(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
         } catch (ServiceException e) {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Service exception.");
         }
@@ -132,5 +115,11 @@ public class RegistrationServlet extends HttpServlet {
         if (!captcha.isCorrect(simpleCaptchaAnswer)) {
             throw new CaptchaValidationException("SimpleCaptcha");
         }
+    }
+
+    private void sendAjaxJsonAnswer(HttpServletResponse response, int httpResponseCode, Object objectToJson) throws IOException {
+        response.setStatus(httpResponseCode);
+        response.setHeader("Content-Type", "application/json");
+        response.getWriter().write(GSON.toJson(objectToJson));
     }
 }

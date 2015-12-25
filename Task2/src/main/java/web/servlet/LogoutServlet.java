@@ -21,6 +21,6 @@ public class LogoutServlet extends HttpServlet {
         HttpSession session = req.getSession(false);
         LOGGER.debug("User '{}' has just logged out.", ((User) session.getAttribute("user")).getEmail());
         session.invalidate();
-        resp.sendRedirect("login");
+        resp.sendRedirect("");
     }
 }

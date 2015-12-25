@@ -1,13 +1,13 @@
 package web.listener.factory;
 
 import dao.UserDao;
-import dao.mock_impl.UserDaoMock;
+import dao.in_memory.InMemoryUserDao;
 import dao.postgre.PostgreUserDao;
 import db.TransactionManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import service.UserService;
-import service.mock_impl.UserServiceImpl;
+import service.in_memory.InMemoryUserService;
 import service.postgre.PostgreUserService;
 import service.validators.UserValidator;
 
@@ -50,9 +50,9 @@ public class ServiceFactory {
     }
 
     private static UserService initMemoryService() {
-        UserDao userDao = new UserDaoMock();
+        UserDao userDao = new InMemoryUserDao();
         UserValidator userValidator = new UserValidator();
-        return new UserServiceImpl(userDao, userValidator);
+        return new InMemoryUserService(userDao, userValidator);
     }
 
     private static UserService initTransactionalService() {

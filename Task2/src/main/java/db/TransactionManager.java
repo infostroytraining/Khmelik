@@ -23,7 +23,7 @@ public class TransactionManager {
         logger.info("Transaction manager initialized.");
     }
 
-    public <T> T doTask(Transaction<T> transaction, int transactionIsolation) throws TransactionException, DuplicateInsertException, ValidationException {
+    public <T> T doTask(Transaction<T> transaction, int transactionIsolation) throws TransactionException, ValidationException {
         Connection connection = null;
         try {
             connection = usersDs.getConnection();

@@ -1,5 +1,6 @@
 package web.servlet;
 
+import com.google.gson.Gson;
 import db.exceptions.TransactionException;
 import entity.User;
 import org.apache.logging.log4j.LogManager;
@@ -47,23 +48,23 @@ public class LoginServlet extends HttpServlet{
         try {
             User user = userService.loadUserByUsername(login);
             if(user != null && user.getPassword().equals(password)){
-                //TODO replace with ajax
-//          Replaced with Ajax
-//                req.getSession().setAttribute("user", user);
-//                logger.info("User {} have been successfully logged in.", login);
-//                resp.sendRedirect("welcome");
+                req.getSession().setAttribute("user", user);
+                logger.info("User {} have been successfully logged in.", login);
+                sendAjaxJsonAnswer(resp, HttpServletResponse.SC_OK, user);
             } else {
-                //TODO replace with ajax
-//          Replaced with Ajax
-//                req.getSession().setAttribute("loginError", "Wrong credentials. Please try again.");
-//                req.getSession().setAttribute("loginDTO", login);
-//                logger.info("User {} credentials are wrong.", login);
-//                logger.exit();
-//                resp.sendRedirect("login");
+                logger.info("User {} credentials are wrong.", login);
+                String loginError = "Wrong credentials. Please try again.";
+                sendAjaxJsonAnswer(resp, HttpServletResponse.SC_BAD_REQUEST, loginError);
             }
-        } catch (TransactionException | DuplicateInsertException | ValidationException e) {
-            logger.error("Transactional | Duplicate | Validation exception in login servlet.", e);
+        } catch (TransactionException | ValidationException e) {
+            logger.error("Transactional | Validation exception in login servlet.", e);
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private void sendAjaxJsonAnswer(HttpServletResponse response, int httpResponseCode, Object objectToJson) throws IOException {
+        response.setStatus(httpResponseCode);
+        response.setHeader("Content-Type", "application/json");
+        response.getWriter().write(new Gson().toJson(objectToJson));
     }
 }

@@ -6,6 +6,6 @@ import service.exceptions.ValidationException;
 
 public interface Transaction<T> {
     
-    public T execute() throws DaoException, ValidationException, DuplicateInsertException;
+    public T execute() throws DaoException, ValidationException;
 
 }

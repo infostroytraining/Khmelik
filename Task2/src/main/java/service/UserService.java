@@ -8,8 +8,8 @@ import service.exceptions.DuplicateInsertException;
 
 public interface UserService {
 
-    User register(User user) throws ValidationException, DuplicateInsertException, ServiceException, TransactionException;
+    User register(User user) throws ValidationException, ServiceException, TransactionException;
 
-    User loadUserByUsername(String username) throws TransactionException, DuplicateInsertException, ValidationException;
+    User loadUserByUsername(String username) throws TransactionException, ValidationException;
 
 }

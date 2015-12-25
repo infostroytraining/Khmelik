@@ -6,6 +6,8 @@ public class FieldError extends Exception {
 
     private String message;
 
+    public FieldError(){};
+
     public FieldError(Field field) {
         this.message = "Error in input field '" + field.name() + "'. " + field.getUserMessage();
     }
