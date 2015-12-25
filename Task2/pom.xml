@@ -9,6 +9,10 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
 
+    <properties>
+        <runSuite>**/AllTests.class</runSuite>
+    </properties>
+
     <build>
         <finalName>Task2</finalName>
         <sourceDirectory>src/main/java</sourceDirectory>
@@ -31,6 +35,20 @@
                     <path>/Task2</path>
                     <username>admin</username>
                     <password>password</password>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19</version>
+                <configuration>
+                    <includes>
+                        <include>${runSuite}</include>
+                    </includes>
+                    <forkMode>always</forkMode>
+                    <systemPropertyVariables>
+                        <log4j.configuration>file:${basedir}/src/test/resources/tests-log4j2.xml</log4j.configuration>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
         </plugins>

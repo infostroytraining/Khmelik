@@ -1,4 +1,4 @@
-package web.utils;
+package utils;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -12,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 

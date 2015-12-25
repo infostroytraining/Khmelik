@@ -6,7 +6,7 @@ import entity.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import service.exceptions.ServiceException;
-import web.utils.ImageSavingUtils;
+import utils.ImageSavingUtils;
 import web.exceptions.CaptchaValidationException;
 import service.exceptions.FieldError;
 import service.exceptions.ValidationException;
@@ -14,7 +14,7 @@ import service.exceptions.DuplicateInsertException;
 import nl.captcha.Captcha;
 import service.UserService;
 import service.validators.UserField;
-import web.utils.GoogleReCaptchaValidationUtils;
+import utils.GoogleReCaptchaValidationUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
@@ -84,18 +84,25 @@ public class RegistrationServlet extends HttpServlet {
                 ImageSavingUtils.saveImage(imagePart, imagesFolderRelativePath, registeredUser.getImage());
 
             logger.info("User {} has ben successfully registered", user.getEmail());
-            resp.sendRedirect("welcome");
+
+            //TODO replace with ajax
+            //resp.sendRedirect("welcome");
+
         } catch (CaptchaValidationException | DuplicateInsertException e) {
             session.setAttribute(USER_DTO_ATTRIBUTE_NAME, userDTO);
             session.setAttribute("captchaDuplicationException", e);
-            resp.sendRedirect(REGISTRATION_PAGE);
+
+            //TODO replace with ajax
+            //resp.sendRedirect(REGISTRATION_PAGE);
         } catch (ValidationException e) {
             session.setAttribute(USER_DTO_ATTRIBUTE_NAME, userDTO);
             session.setAttribute("validationException", e);
-            resp.sendRedirect(REGISTRATION_PAGE);
+            //TODO replace with ajax
+            //resp.sendRedirect(REGISTRATION_PAGE);
         } catch (TransactionException e) {
             session.setAttribute("transactionException", e);
-            resp.sendRedirect(REGISTRATION_PAGE);
+            //TODO replace with ajax
+            //resp.sendRedirect(REGISTRATION_PAGE);
         } catch (ServiceException e) {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Service exception.");
         }

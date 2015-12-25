@@ -47,15 +47,19 @@ public class LoginServlet extends HttpServlet{
         try {
             User user = userService.loadUserByUsername(login);
             if(user != null && user.getPassword().equals(password)){
-                req.getSession().setAttribute("user", user);
-                logger.info("User {} have been successfully logged in.", login);
-                resp.sendRedirect("welcome");
+                //TODO replace with ajax
+//          Replaced with Ajax
+//                req.getSession().setAttribute("user", user);
+//                logger.info("User {} have been successfully logged in.", login);
+//                resp.sendRedirect("welcome");
             } else {
-                req.getSession().setAttribute("loginError", "Wrong credentials. Please try again.");
-                req.getSession().setAttribute("loginDTO", login);
-                logger.info("User {} credentials are wrong.", login);
-                logger.exit();
-                resp.sendRedirect("login");
+                //TODO replace with ajax
+//          Replaced with Ajax
+//                req.getSession().setAttribute("loginError", "Wrong credentials. Please try again.");
+//                req.getSession().setAttribute("loginDTO", login);
+//                logger.info("User {} credentials are wrong.", login);
+//                logger.exit();
+//                resp.sendRedirect("login");
             }
         } catch (TransactionException | DuplicateInsertException | ValidationException e) {
             logger.error("Transactional | Duplicate | Validation exception in login servlet.", e);

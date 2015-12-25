@@ -1,10 +1,9 @@
-package web.utils;
+package utils;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-import web.utils.HttpSender;
 
 import javax.json.Json;
 import javax.json.JsonObject;

@@ -6,8 +6,6 @@ import dto.UserDTO;
 import entity.User;
 import nl.captcha.Captcha;
 import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -17,29 +15,30 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import service.UserService;
 import service.exceptions.DuplicateInsertException;
 import service.exceptions.ServiceException;
 import service.exceptions.ValidationException;
-import web.utils.GoogleReCaptchaValidationUtils;
 import web.exceptions.CaptchaValidationException;
+import utils.GoogleReCaptchaValidationUtils;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
 
 @RunWith(PowerMockRunner.class)
+@PowerMockIgnore("javax.management.*")
 @PrepareForTest({Captcha.class})
 public class RegistrationServletTest {
 

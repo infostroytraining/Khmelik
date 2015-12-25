@@ -35,7 +35,7 @@ public class PostgreUserService implements UserService {
     public User register(User user) throws ValidationException, DuplicateInsertException, TransactionException {
         return transactionManager.doTask(() -> {
             logger.entry(user);
-            userValidator.validate(user);
+            //userValidator.validate(user);                   replaced by client-side validation
             String imageFileName = user.getName() + user.getSurname() + ".jpg";
             user.setImage(Strings.isEmpty(user.getImage()) ? null : imageFileName);
             logger.debug("User image set to '{}'.", user.getImage());

@@ -3,7 +3,7 @@ package web.listener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import service.UserService;
-import web.utils.GoogleReCaptchaValidationUtils;
+import utils.GoogleReCaptchaValidationUtils;
 import web.listener.factory.ServiceFactory;
 
 import javax.servlet.ServletContext;
