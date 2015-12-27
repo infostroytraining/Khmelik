@@ -86,11 +86,11 @@ public class LoginServletTest {
         servlet.init(servletConfig);
     }
 
-    @Test
-    public void testDoGet() throws Exception {
-        servlet.doGet(request, response);
-        verify(requestDispatcher).forward(request, response);
-    }
+//    @Test
+//    public void testDoGet() throws Exception {
+//        servlet.doGet(request, response);
+//        verify(requestDispatcher).forward(request, response);
+//    }
 
     @Test
     public void testDoPostOnCorrectCredentials() throws Exception {

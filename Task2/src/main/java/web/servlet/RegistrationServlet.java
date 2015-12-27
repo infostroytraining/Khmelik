@@ -1,5 +1,6 @@
 package web.servlet;
 
+import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import db.exceptions.TransactionException;
 import entity.User;
@@ -46,21 +47,16 @@ public class RegistrationServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("registrationJSP").forward(req, resp);
-    }
-
-    @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (!isMultipartFormat(req)) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Content type is not multiformat.");
             return;
         }
         req.setCharacterEncoding("UTF-8");
 
         String email = req.getParameter("email");
-        String password = req.getParameter("password");
-        String confirmedPassword = req.getParameter("confirmedPassword");
+        String password = req.getParameter("registrationPassword");
+        String confirmedPassword = req.getParameter("registrationConfirmed");
         String name = req.getParameter("name");
         String surname = req.getParameter("surname");
         Part imagePart = req.getPart("image");
@@ -106,14 +102,17 @@ public class RegistrationServlet extends HttpServlet {
 
     private void validateGoogleCaptcha(String gRecaptchaResponse) throws CaptchaValidationException, IOException {
         if (!googleReCaptchaValidationUtils.validate(gRecaptchaResponse)) {
-            throw new CaptchaValidationException("Google reCAPTCHA");
+            throw new CaptchaValidationException("recaptcha");
         }
     }
 
     private void validateSimpleCaptcha(String simpleCaptchaAnswer, HttpSession session) throws CaptchaValidationException {
         Captcha captcha = (Captcha) session.getAttribute(Captcha.NAME);
-        if (!captcha.isCorrect(simpleCaptchaAnswer)) {
-            throw new CaptchaValidationException("SimpleCaptcha");
+
+        if (Strings.isNullOrEmpty(simpleCaptchaAnswer) ||
+                captcha == null ||
+                !captcha.isCorrect(simpleCaptchaAnswer)) {
+            throw new CaptchaValidationException("simplecaptcha");
         }
     }
 

@@ -15,16 +15,18 @@ public class LoginFilter implements Filter {
     private static final Logger logger = LogManager.getLogger();
 
     private static final String LOGIN_PAGE_URL = "login";
-    private static final String CSS_JSP_PNG_GIF_JS_INPUT_REGEX = ".*(css|jpg|png|gif|js|jspf)";
+    private static final String CSS_JSP_PNG_GIF_JS_INPUT_REGEX = ".*(css|map|jpg|png|gif|js|jspf)";
     private static final String USER_ATTRIBUTE_NAME = "user";
 
     private String loginExcludePattern;
     private String registrationExcludePattern;
+    private String mainPageExcludePattern;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         this.loginExcludePattern = filterConfig.getInitParameter("loginExcludePattern");
         this.registrationExcludePattern = filterConfig.getInitParameter("registrationExcludePattern");
+        this.mainPageExcludePattern = filterConfig.getInitParameter("mainPageExcludePattern");
         logger.info("LoginFilter initialized.");
     }
 
@@ -39,7 +41,7 @@ public class LoginFilter implements Filter {
             chain.doFilter(request, response);
         } else {
             logger.info("No user logged in.");
-            servletResponse.sendRedirect(LOGIN_PAGE_URL);
+            servletResponse.sendRedirect(mainPageExcludePattern);
         }
     }
 
@@ -57,6 +59,7 @@ public class LoginFilter implements Filter {
     private boolean isValidURL(String requestURL) {
         return requestURL.contains(loginExcludePattern) ||
                 requestURL.contains(registrationExcludePattern) ||
+                requestURL.endsWith("/Task2/") ||
                 requestURL.matches(CSS_JSP_PNG_GIF_JS_INPUT_REGEX);
     }
 }

@@ -1,8 +1,4 @@
-<div>
-    <img id="simpleCaptchaImage" src="simpleCaptcha.png"/>
-    <input type="button" onclick="refreshCaptcha()" value="Refresh">
-    <br/>
-    <label>Enter string from above</label>
-    <input name="simpleCaptchaAnswer" type="text"/>
-    <br/>
-</div>
+<img id="simpleCaptchaImage" src="simpleCaptcha.png"/>
+<input type="button" class="btn btn-link" onclick="refreshCaptcha()" value="Refresh">
+<input id="simpleCaptchaAnswerInput" class="form-control" name="simpleCaptchaAnswer"
+       type="text" placeholder="Enter text from above..."/>

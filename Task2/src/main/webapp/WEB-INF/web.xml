@@ -82,14 +82,23 @@
     <!-- Welcome JSP -->
     <servlet>
         <servlet-name>WelcomeJSP</servlet-name>
-        <jsp-file>/WEB-INF/jsp/welcome.jsp</jsp-file>
+        <jsp-file>/WEB-INF/jsp/main.jsp</jsp-file>
     </servlet>
 
     <servlet-mapping>
         <servlet-name>WelcomeJSP</servlet-name>
-        <url-pattern>/welcome</url-pattern>
+        <url-pattern>/welcomeJSP</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>MainServlet</servlet-name>
+        <servlet-class>web.servlet.MainPageServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MainServlet</servlet-name>
+        <url-pattern></url-pattern>
+    </servlet-mapping>
+    
     <!-- Login JSP -->
     <servlet>
         <servlet-name>LoginJSP</servlet-name>
@@ -123,6 +132,10 @@
         <init-param>
             <param-name>registrationExcludePattern</param-name>
             <param-value>/registration</param-value>
+        </init-param>
+        <init-param>
+            <param-name>mainPageExcludePattern</param-name>
+            <param-value></param-value>
         </init-param>
     </filter>
 

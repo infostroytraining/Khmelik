@@ -50,7 +50,7 @@ public class PostgreUserService implements UserService {
             } else {
                 logger.warn("User duplicated insert.");
                 List<FieldError> errors = new ArrayList<>();
-                errors.add(new DuplicateInsertException());
+                errors.add(new DuplicateInsertException(UserField.EMAIL));
                 throw new ValidationException(errors);
             }
         }, Connection.TRANSACTION_READ_COMMITTED);

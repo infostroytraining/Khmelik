@@ -4,12 +4,13 @@ import service.validators.Field;
 
 public class DuplicateInsertException extends FieldError {
 
-    private static final String MESSAGE = "User with such email or name+surname combination already exists.";
-
-    public DuplicateInsertException() {}
+    public DuplicateInsertException(Field field) {
+        super(field);
+        this.message = "User with such " + field.name().toLowerCase() + " already exists.";
+    }
 
     @Override
     public String getMessage() {
-        return MESSAGE;
+        return message;
     }
 }

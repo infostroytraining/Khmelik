@@ -45,7 +45,7 @@ public class InMemoryUserService implements UserService {
             } else {
                 logger.warn("User duplicated insert.");
                 List<FieldError> errors = new ArrayList<>();
-                errors.add(new DuplicateInsertException());
+                errors.add(new DuplicateInsertException(UserField.EMAIL));
                 throw new ValidationException(errors);
             }
         } catch (DaoException e) {

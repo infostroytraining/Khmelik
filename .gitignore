@@ -1,3 +1,15 @@
+*.jar
+
+*.war
+
 *.iml
+
 .idea/
+
 target/
+
+Task2/src/main/webapp/resources/css/external/
+
+Task2/src/main/webapp/resources/js/external/
+
+Task2/src/main/webapp/resources/img/

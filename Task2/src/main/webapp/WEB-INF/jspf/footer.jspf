@@ -1,0 +1,18 @@
+<!-- jQuery -->
+<script src="resources/js/external/jquery.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="resources/js/external/bootstrap.min.js"></script>
+
+<!-- Plugin JavaScript -->
+<script src="resources/js/external/jquery.validate.min.js"></script>
+<script src="resources/js/external/additional-methods.min.js"></script>
+<script src="resources/js/external/jquery.easing.min.js"></script>
+<script src="resources/js/external/jquery.fittext.js"></script>
+<script src="resources/js/external/wow.min.js"></script>
+
+<script src='https://www.google.com/recaptcha/api.js'></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="resources/js/external/creative.js"></script>
+<script src="resources/js/scripts.js"></script>

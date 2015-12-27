@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 public class LogoutServletTest {
 
     private static final String USER_ATTRIBUTE_NAME = "user";
-    private static final String START_PAGE_URL = "";
+    private static final String START_PAGE_URL = "welcomeJSP";
     private LogoutServlet logoutServlet = new LogoutServlet();
 
     @Mock
@@ -41,6 +41,6 @@ public class LogoutServletTest {
     public void testDoGet() throws Exception {
         logoutServlet.doGet(request, response);
         verify(session).invalidate();
-        verify(response).sendRedirect(START_PAGE_URL);
+        verify(response).sendRedirect(request.getContextPath() + '/');
     }
 }

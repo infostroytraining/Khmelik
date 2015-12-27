@@ -24,7 +24,7 @@
     <Loggers>
         <Root level="INFO">
             <AppenderRef ref="Console"/>
-            <AppenderRef ref="Async"/>
+            <!--<AppenderRef ref="Async"/>-->
         </Root>
 
         <Logger name="httpSernder" level="TRACE">

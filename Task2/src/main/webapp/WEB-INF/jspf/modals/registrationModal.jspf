@@ -1,0 +1,66 @@
+<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="registerModalLabel">Signing you up!<br/>
+                    <small>Fill in the form below to register the account and get instant access:</small>
+                </h4>
+            </div>
+
+            <div class="modal-body">
+                <form id="registration-form" enctype="multipart/form-data">
+                    <div id="form-group-name" class="form-group credentials">
+                        <label class="sr-only" for="register-form-first-name">First name</label>
+                        <input type="text" name="name" placeholder="First name..." class="form-first-name form-control"
+                               id="register-form-first-name"/>
+                    </div>
+
+                    <div id="form-group-surname" class="form-group credentials">
+                        <label class="sr-only" for="register-form-last-name">Last name</label>
+                        <input type="text" name="surname" placeholder="Last name..." class="form-last-name form-control"
+                               id="register-form-last-name"/>
+
+                    </div>
+                    <div id="form-group-email" class="form-group credentials">
+                        <label class="sr-only" for="register-form-email">Email</label>
+                        <input type="email" name="email" placeholder="Email..." class="form-email form-control"
+                               id="register-form-email"/>
+                    </div>
+
+                    <div id="form-group-password" class="form-group credentials">
+                        <label class="sr-only" for="registrationPassword">Password</label>
+                        <input type="password" name="registrationPassword" placeholder="Password..." class="form-email form-control"
+                               id="registrationPassword"/>
+                    </div>
+                    <div id="form-group-confirmed-password" class="form-group credentials">
+                        <label class="sr-only" for="registrationConfirmed">Confirmed password</label>
+                        <input type="password" name="registrationConfirmed" placeholder="Confirmed password..."
+                               class="form-email form-control" id="registrationConfirmed"/>
+                    </div>
+
+                    <div id="form-group-image" class="form-group">
+                        <label class="sr-only" for="register-form-image">Image</label>
+                        <input name="image" class="form-about-yourself form-control" type="file"
+                               id="register-form-image"/>
+                    </div>
+
+                    <div id="form-group-recaptcha" class="form-group">
+                        <%@include file="/WEB-INF/jspf/captcha/googleRecaptcha.jspf" %>
+                    </div>
+
+                    <div id="form-group-simplecaptcha" class="form-group">
+                        <%@include file="/WEB-INF/jspf/captcha/simpleCaptcha.jspf" %>
+                    </div>
+
+                    <div class="form-group text-right">
+                        <input type="submit" class="btn btn-link btn-xl" value="Register..."/>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
